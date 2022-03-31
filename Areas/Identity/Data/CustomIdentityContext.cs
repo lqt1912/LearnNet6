@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LearnNet6.Data;
 
-public class CustomIdentityContext : IdentityDbContext<ApplicationUser>
+public class CustomIdentityContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
     public CustomIdentityContext(DbContextOptions<CustomIdentityContext> options)
         : base(options)

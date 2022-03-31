@@ -1,4 +1,5 @@
 ﻿using LearnNet6.Models;
+using LearnNet6.ViewModels;
 
 namespace LearnNet6.Services
 {
@@ -6,5 +7,6 @@ namespace LearnNet6.Services
     {
         Task<object> Authenticate(LoginModel model);
         Task<object> Register(RegisterModel model);
+        Task<IEnumerable<UserViewModel>> GetAllUser();
     }
 }

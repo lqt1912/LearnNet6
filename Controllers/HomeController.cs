@@ -1,4 +1,5 @@
 ﻿using LearnNet6.Models;
+using LearnNet6.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,13 +9,16 @@ namespace LearnNet6.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IUserServices userService;
+        public HomeController(ILogger<HomeController> logger, IUserServices userService)
         {
             _logger = logger;
+            this.userService = userService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewBag.Users = await userService.GetAllUser();
             return View();
         }
 

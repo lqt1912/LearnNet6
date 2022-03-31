@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LearnNet6.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        IUserServices userServices;
+        readonly IUserServices userServices;
 
         public UserController(IUserServices userServices)
         {
@@ -23,10 +23,10 @@ namespace LearnNet6.Controllers
             return Ok(await userServices.Authenticate(model));
         }
 
-        [HttpPost("register")]
+        [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
-            RegisterModelValidator val = new RegisterModelValidator();
+            var val = new RegisterModelValidator();
             var validationResult = val.Validate(model);
             if (validationResult.IsValid)
             {

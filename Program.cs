@@ -1,9 +1,14 @@
 using FluentValidation.AspNetCore;
 using LearnNet6.Data;
 using LearnNet6.Data.Entity;
+using LearnNet6.Data.Repositories;
 using LearnNet6.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using LearnNet6.Mappers;
+using MediatR;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +23,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddFluentValidation();
-
-builder.Services.AddScoped<IUserServices, UserService>();
-
+builder.Services.AddCustomRepository();
+builder.Services.AddCustomExtensions();
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -32,7 +37,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
 });
 builder.Services.AddSwaggerDocument();
-
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
