@@ -2,7 +2,7 @@
 
 namespace LearnNet6.Data.Repositories
 {
-    public interface IPostRepository :IBaseRepository<Post>
+    public interface IPostRepository : IBaseRepository<Post>
     {
     }
 }

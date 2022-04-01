@@ -5,7 +5,9 @@ namespace LearnNet6.Data.Repositories
     public class PostRepository : BaseRepository<Post>, IPostRepository
     {
         public ApplicationDbContext Context { get; set; }
-        public PostRepository(ApplicationDbContext Context) : base(Context)
+        private IConfiguration configuration;
+
+        public PostRepository(ApplicationDbContext Context, IConfiguration configuration) : base(Context, configuration)
         {
             this.Context = Context;
         }

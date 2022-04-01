@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
@@ -19,17 +20,23 @@ namespace LearnNet6.Data.Repositories
         /// </summary>
         /// <value>The database set.</value>
         private DbSet<T> DbSet { get; set; }
+
+        private IConfiguration configuration;
+
+        private string _connectionString;
+
         #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Repository{T}" /> class.
         /// </summary>
         /// <param name="dbContext">The database context.</param>
-        protected BaseRepository(ApplicationDbContext dbContext) 
+        protected BaseRepository(ApplicationDbContext dbContext, IConfiguration configuration)
         {
             DbContext = dbContext;
             DbSet = DbContext.Set<T>();
-            
+            this.configuration = configuration;
+            _connectionString = configuration.GetConnectionString("SqlConnection");
         }
 
         /// <summary>
@@ -285,5 +292,21 @@ namespace LearnNet6.Data.Repositories
                 return await query.ToListAsync();
             }
         }
+
+        public IQueryable<T> ExecuteSqlRaw(string query, params object[] parameters)
+        {
+            return DbContext.Set<T>().FromSqlRaw(query, parameters);
+        }
+
+        public IQueryable<T> ExecuteSqlRawForQueryType(string query)
+        {
+            return DbContext.Set<T>().FromSqlRaw(query);
+        }
+
+        public int ExecuteNoneQuery(string query, params object[] parameters)
+        {
+            return DbContext.Database.ExecuteSqlRaw(query, parameters);
+        }
+
     }
 }

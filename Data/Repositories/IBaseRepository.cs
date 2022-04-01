@@ -6,11 +6,11 @@ namespace LearnNet6.Data.Repositories
 {
     public interface IBaseRepository<T> where T : class
     {
-       
+
         IQueryable<T> GetAll();
-       
+
         T GetById(Guid id);
-      
+
         Task<T> GetAsyncById(Guid id);
         T Find(Expression<Func<T, bool>> match);
         Task<T> FindAsync(Expression<Func<T, bool>> match);
@@ -33,5 +33,10 @@ namespace LearnNet6.Data.Repositories
         Expression<Func<T, bool>> filter = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         Func<IQueryable<T>, IIncludableQueryable<T, object>> includeProperties = null);
+
+        IQueryable<T> ExecuteSqlRaw(string query, params object[] parameters);
+        IQueryable<T> ExecuteSqlRawForQueryType(string query);
+        int ExecuteNoneQuery(string query, params object[] parameters);
+
     }
 }

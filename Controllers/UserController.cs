@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LearnNet6.Controllers
 {
+    
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -17,12 +18,22 @@ namespace LearnNet6.Controllers
             this.userServices = userServices;
         }
 
+        /// <summary>
+        /// Đăng nhập.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
             return Ok(await userServices.Authenticate(model));
         }
 
+        /// <summary>
+        /// Đăng kí người dùng mới.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {

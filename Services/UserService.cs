@@ -39,19 +39,24 @@ namespace LearnNet6.Services
             if (result.Succeeded)
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes("THIS IS USED TO SIGN AND VERIFY JWT TOKENS, REPLACE IT WITH YOUR OWN SECRET, IT CAN BE ANY STRING");
+                var key = Encoding.UTF8.GetBytes("ikoafhqiuoefhewouiqdfhiuosdfsdfsdfsdf");
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name,"Name"),
-                    new Claim(ClaimTypes.Role, "ClaimRole")
-                }),
+                    {
+                        new Claim(ClaimTypes.Name,"Name"),
+                        new Claim(ClaimTypes.Role, "ClaimRole"),
+                        new Claim("Id", "1"),
+                        new Claim(JwtRegisteredClaimNames.Sub, model.Email),
+                        new Claim(JwtRegisteredClaimNames.Email, model.Email)
+                    }),
                     Expires = DateTime.UtcNow.AddDays(7),
+                    Audience = "ikoafhqiuoefhewouiqdfhiuosdfsdfsdfsdf",
+                    Issuer = "ikoafhqiuoefhewouiqdfhiuosdfsdfsdfsdf",
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
-                return token;
+                return tokenHandler.WriteToken(token);
             }
             else
                 return "Nothing";
@@ -81,6 +86,9 @@ namespace LearnNet6.Services
             if (result.Succeeded)
             {
                 var userId = await _userManager.GetUserIdAsync(user);
+                var _user = await userRepository.GetAsyncById(Guid.Parse(userId));
+                if (_user == null) return null;
+
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 return code;
@@ -100,7 +108,7 @@ namespace LearnNet6.Services
 
         public async Task<IEnumerable<UserViewModel>> GetAllUser()
         {
-            var list =await userRepository.GetAll().ToListAsync();
+            var list = await userRepository.GetAll().ToListAsync();
             var response = list.Select(x => new UserViewModel()
             {
                 Email = x.Email,

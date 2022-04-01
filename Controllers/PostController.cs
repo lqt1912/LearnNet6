@@ -1,5 +1,6 @@
 ﻿using LearnNet6.Models.Requests;
 using LearnNet6.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearnNet6.Controllers
@@ -22,6 +23,7 @@ namespace LearnNet6.Controllers
 			return Ok(result);
 		}
 
+		[Authorize]
 		[HttpGet]
 		public async Task<IActionResult> GetAllPost()
 		{

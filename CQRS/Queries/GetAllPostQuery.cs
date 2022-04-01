@@ -1,4 +1,5 @@
-﻿using LearnNet6.Data.Repositories;
+﻿using LearnNet6.Data.Entity;
+using LearnNet6.Data.Repositories;
 using LearnNet6.ViewModels;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,8 +25,10 @@ namespace LearnNet6.CQRS.Queries
 
         public async Task<IEnumerable<PostViewModel>> Handle(GetAllPostQuery request, CancellationToken cancellationToken)
         {
-            var posts = await _postRepository.GetAll().ToListAsync();
-            var responses = posts.Select(x => new PostViewModel()
+            var query = "select * from Posts";
+            var _posts = _postRepository.ExecuteSqlRawForQueryType(query);
+            //var posts = await _postRepository.GetAll().ToListAsync();
+            var responses = _posts.Select(x => new PostViewModel()
             {
                 Title = x.Title,
                 Id = x.Id.ToString().Substring(0, 5).ToUpper(),

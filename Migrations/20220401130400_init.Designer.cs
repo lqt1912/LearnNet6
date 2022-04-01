@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearnNet6.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220331142018_init")]
+    [Migration("20220401130400_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,37 @@ namespace LearnNet6.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("LearnNet6.Data.Entity.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Detail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Latitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Longtitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Addresses");
+                });
 
             modelBuilder.Entity("LearnNet6.Data.Entity.ApplicationRole", b =>
                 {
@@ -61,6 +92,9 @@ namespace LearnNet6.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("AddressId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -73,11 +107,9 @@ namespace LearnNet6.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -115,6 +147,8 @@ namespace LearnNet6.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AddressId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -124,6 +158,46 @@ namespace LearnNet6.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f8097645-b1c7-4298-9356-5244fd8dcabd"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "793a4503-f76b-403e-b028-3c3840bdaa2a",
+                            Email = "thanglequoc1912@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "Lê Quốc",
+                            LastName = "Thắng",
+                            LockoutEnabled = true,
+                            NormalizedEmail = "thanglequoc1912@gmail.com",
+                            NormalizedUserName = "THANGLEQUOC1912@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAoqZuAyWwiKrsIjkHq7JSjmEEXMZHFcQ3wLHkjVMZ9xTXRwxIb7xehLGAN7xAQEcA==",
+                            PhoneNumber = "091234836721",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "N2AZ7AT2TAQAB5IBSPE334HYSFJVDGV7",
+                            TwoFactorEnabled = false,
+                            UserName = "thanglequoc1912@gmail.com"
+                        },
+                        new
+                        {
+                            Id = new Guid("e0a643eb-f72c-4043-8e0c-aa4144e20c3b"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "aaaf5630-3dda-44d2-8bd8-1b39ca36d575",
+                            Email = "duyendatthang@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "Nguyễn Quốc",
+                            LastName = "Trung",
+                            LockoutEnabled = true,
+                            NormalizedEmail = "DUYENDATTHANG@gmail.com",
+                            NormalizedUserName = "DUYENDATTHANG@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAoqZuAyWwiKrsIjkHq7JSjmEEXMZHFcQ3wLHkjVMZ9xTXRwxIb7xehLGAN7xAQEcA==",
+                            PhoneNumber = "093478329239",
+                            PhoneNumberConfirmed = true,
+                            SecurityStamp = "DNZOWEXXK7I25QGATY3UPNZPF4JGGPOD",
+                            TwoFactorEnabled = false,
+                            UserName = "duyendatthang@gmail.com"
+                        });
                 });
 
             modelBuilder.Entity("LearnNet6.Data.Entity.Post", b =>
@@ -252,6 +326,15 @@ namespace LearnNet6.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("LearnNet6.Data.Entity.ApplicationUser", b =>
+                {
+                    b.HasOne("LearnNet6.Data.Entity.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId");
+
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("LearnNet6.Data.Entity.Post", b =>

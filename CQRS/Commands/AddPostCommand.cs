@@ -33,9 +33,10 @@ namespace LearnNet6.CQRS.Commands
 
             await _postRepository.SaveChangesAsync();
             var _post = await _postRepository.GetAsyncById(post.Id);
+            var author = await _userRepository.GetAsyncById(_post.AuthorId);
             return new PostViewModel()
             {
-                AuthorName = (_userRepository.GetById(_post.AuthorId)).FirstName + (_userRepository.GetById(_post.AuthorId)).LastName,
+                AuthorName = author.FirstName + author.LastName,
                 Id = _post.Id.ToString(),
                 Title = _post.Title,
             };
