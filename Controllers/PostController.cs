@@ -1,7 +1,10 @@
-﻿using LearnNet6.Models.Requests;
+﻿using LearnNet6.Middlewares;
+using LearnNet6.Models.Requests;
 using LearnNet6.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace LearnNet6.Controllers
 {
@@ -23,12 +26,12 @@ namespace LearnNet6.Controllers
 			return Ok(result);
 		}
 
-		[Authorize]
 		[HttpGet]
+		[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 		public async Task<IActionResult> GetAllPost()
 		{
 			var result  = await postService.GetAllPost();
-			return Ok(result);
+			return Ok(CommonApiResponse.Create(HttpStatusCode.OK, result));
 		}
 	}
 }

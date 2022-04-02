@@ -21,9 +21,13 @@ namespace LearnNet6.Services
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ApplicationDbContext dbContext;
         private readonly IUserRepository userRepository;
+        private readonly IConfiguration configuration;
         public UserService(SignInManager<ApplicationUser> signInManager,
             IUserStore<ApplicationUser> userStore,
-            UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, IUserRepository userRepository)
+            UserManager<ApplicationUser> userManager,
+            ApplicationDbContext dbContext,
+            IUserRepository userRepository,
+            IConfiguration configuration)
         {
             _signInManager = signInManager;
             _userStore = userStore;
@@ -31,6 +35,7 @@ namespace LearnNet6.Services
             _emailStore = GetEmailStore();
             this.dbContext = dbContext;
             this.userRepository = userRepository;
+            this.configuration = configuration;
         }
 
         public async Task<object> Authenticate(LoginModel model)
@@ -39,7 +44,7 @@ namespace LearnNet6.Services
             if (result.Succeeded)
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes("ikoafhqiuoefhewouiqdfhiuosdfsdfsdfsdf");
+                var key = Encoding.UTF8.GetBytes(configuration["Jwt:Issuer"]);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]
@@ -51,8 +56,8 @@ namespace LearnNet6.Services
                         new Claim(JwtRegisteredClaimNames.Email, model.Email)
                     }),
                     Expires = DateTime.UtcNow.AddDays(7),
-                    Audience = "ikoafhqiuoefhewouiqdfhiuosdfsdfsdfsdf",
-                    Issuer = "ikoafhqiuoefhewouiqdfhiuosdfsdfsdfsdf",
+                    Audience = configuration["Jwt:Issuer"],
+                    Issuer = configuration["Jwt:Issuer"],
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);

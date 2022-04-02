@@ -1,4 +1,5 @@
 ﻿using LearnNet6.Data;
+using LearnNet6.Middlewares;
 
 namespace LearnNet6.ExtensionsBuilder
 {
@@ -22,7 +23,6 @@ namespace LearnNet6.ExtensionsBuilder
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
             app.UseAuthentication();

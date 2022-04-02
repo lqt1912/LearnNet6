@@ -11,13 +11,12 @@ namespace LearnNet6.ExtensionsBuilder
         {
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-            builder.Services.AddDbContext<CustomIdentityContext>(options =>
-                options.UseSqlServer(connectionString)); builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
                  options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.Configure<IdentityOptions>(options =>
             {
                 // Default Password settings.
