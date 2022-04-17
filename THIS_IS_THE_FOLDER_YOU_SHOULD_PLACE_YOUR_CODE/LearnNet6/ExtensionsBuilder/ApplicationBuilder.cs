@@ -1,5 +1,6 @@
 ﻿using LearnNet6.Data;
 using LearnNet6.Middlewares;
+using LearnNet6.SignalR;
 
 namespace LearnNet6.ExtensionsBuilder
 {
@@ -18,7 +19,11 @@ namespace LearnNet6.ExtensionsBuilder
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseCors(x => x
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .SetIsOriginAllowed(origin => true) // allow any origin
+               .AllowCredentials()); // allow credentials
             app.ApplyMigration();
 
             app.UseHttpsRedirection();
@@ -33,6 +38,7 @@ namespace LearnNet6.ExtensionsBuilder
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
+            app.MapHub<SignalRHub>("/signalRHub");
             return app;
         }
     }

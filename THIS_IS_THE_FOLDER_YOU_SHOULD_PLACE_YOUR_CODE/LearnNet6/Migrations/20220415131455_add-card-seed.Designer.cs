@@ -4,6 +4,7 @@ using LearnNet6.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearnNet6.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220415131455_add-card-seed")]
+    partial class addcardseed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,57 +85,57 @@ namespace LearnNet6.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("fe584981-bea3-4547-8c54-dc65ba4eb224"),
-                            ConcurrencyStamp = "dc4605e8-0efd-4c23-892b-ca14762ea1d9",
+                            Id = new Guid("060da187-0521-4a10-b951-4891ce70c097"),
+                            ConcurrencyStamp = "76e95fd3-55c1-4278-958d-88a68c3aee3e",
                             Name = "Owner",
                             NormalizedName = "OWNER"
                         },
                         new
                         {
-                            Id = new Guid("f0db8435-acfc-4aa1-9af8-bde05b629a5d"),
-                            ConcurrencyStamp = "e00ace02-8fa4-4d4c-9097-7917abc138d7",
+                            Id = new Guid("4aba22af-148c-49a8-8f99-0d08bff1d6bf"),
+                            ConcurrencyStamp = "fba22c9c-fae8-4cd3-af50-25567463c79f",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = new Guid("4402a846-9c23-4a1c-ac78-26bee34960a3"),
-                            ConcurrencyStamp = "6a13d767-aebd-4788-8d9c-8c70e3955788",
+                            Id = new Guid("9fbc8ff8-2850-44ea-b6b4-0754ee15792d"),
+                            ConcurrencyStamp = "ff492e6c-6939-4f7d-8ab1-a7ee6ba9dc86",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = new Guid("b6495817-15fc-43f4-9eb3-e605a5bcce07"),
-                            ConcurrencyStamp = "a99136be-d999-42f9-a220-37e141fdd7b0",
+                            Id = new Guid("17737c34-68cb-444d-ab7d-6d52757b31e0"),
+                            ConcurrencyStamp = "fa6879a6-f2e8-4735-9f5a-7f57f81d55a6",
                             Name = "Editor",
                             NormalizedName = "EDITOR"
                         },
                         new
                         {
-                            Id = new Guid("7f2d9677-5037-4efb-9034-aecc99f94b4a"),
-                            ConcurrencyStamp = "3c5b0c66-9188-469e-9cbf-5608195e37db",
+                            Id = new Guid("a6ea4b04-6e02-46c7-92a3-bb19d32e0b75"),
+                            ConcurrencyStamp = "343dc8e7-70d4-4b85-bb86-22291fd6d8a4",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         },
                         new
                         {
-                            Id = new Guid("292eea4b-5b56-4e41-b4f1-f2137434c178"),
-                            ConcurrencyStamp = "6fc0bb57-ab64-49d4-97a8-b290a64081d4",
+                            Id = new Guid("553ca4f0-9748-4b12-a3e0-1015a5e5077e"),
+                            ConcurrencyStamp = "27e0b6d0-d6d4-4d2c-b162-dc8c4da43e01",
                             Name = "Business",
                             NormalizedName = "BUSINESS"
                         },
                         new
                         {
-                            Id = new Guid("acb0a04e-7e80-4cf8-94f6-e2a2062e0005"),
-                            ConcurrencyStamp = "62cc4789-dfb4-4c5a-a2a0-9b86c1a42cca",
+                            Id = new Guid("ae07942a-ed73-482c-b70d-17d18c209af2"),
+                            ConcurrencyStamp = "9acb12b5-7f02-4c01-8de5-2244d13ed409",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = new Guid("0c3662fa-fd25-47db-afb9-e7c74538d6e2"),
-                            ConcurrencyStamp = "f2136d05-d92c-4f9d-a5fb-7939b4e74a74",
+                            Id = new Guid("d068c2be-bc5c-4758-8b51-e6b03920503b"),
+                            ConcurrencyStamp = "494ce117-8a06-4fa4-b685-510ede36f161",
                             Name = "Subscriber",
                             NormalizedName = "SUBSCRIBER"
                         });
@@ -218,7 +220,7 @@ namespace LearnNet6.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d09dbedc-8926-4c04-bc3c-f956f50cebf7"),
+                            Id = new Guid("21e3ccdf-5100-491b-8a71-0ebe7aac6925"),
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "793a4503-f76b-403e-b028-3c3840bdaa2a",
                             Email = "thanglequoc1912@gmail.com",
@@ -237,7 +239,7 @@ namespace LearnNet6.Migrations
                         },
                         new
                         {
-                            Id = new Guid("dd966458-d289-40ca-be0c-46f748d71197"),
+                            Id = new Guid("2533c2f6-936a-4d34-ae62-60937ae0ce18"),
                             AccessFailedCount = 0,
                             ConcurrencyStamp = "aaaf5630-3dda-44d2-8bd8-1b39ca36d575",
                             Email = "duyendatthang@gmail.com",
@@ -262,12 +264,6 @@ namespace LearnNet6.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CardAuthor")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("EstimateValue")
-                        .HasColumnType("int");
-
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
@@ -285,56 +281,56 @@ namespace LearnNet6.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("0cd80f72-85c3-44c1-989d-926cc4b339a1"),
+                            Id = new Guid("4f5c2d94-2ae4-42b2-a56b-fe2f6074778e"),
                             Order = 0,
                             Title = "Harmless Inside",
                             Type = 0
                         },
                         new
                         {
-                            Id = new Guid("7e47ae4c-a056-4494-8a0b-43f2c4e28d6a"),
+                            Id = new Guid("fa1af238-1ec0-4c8d-afa7-52669ae16244"),
                             Order = 1,
                             Title = "Unacceptable Figure",
                             Type = 0
                         },
                         new
                         {
-                            Id = new Guid("f524fdbc-cdb8-4c73-b20f-6a5ee6a1c876"),
+                            Id = new Guid("4e4f639f-60b4-4d45-a639-33b4fbd59632"),
                             Order = 2,
                             Title = "Brisk Reality",
                             Type = 0
                         },
                         new
                         {
-                            Id = new Guid("e3de7d70-c439-4e3f-8695-860c54dfa05a"),
+                            Id = new Guid("25a2f55e-ab80-412b-a0d8-26b261604ec0"),
                             Order = 3,
                             Title = "Overlooked Instruction",
                             Type = 0
                         },
                         new
                         {
-                            Id = new Guid("abcb18b6-4b03-4a2a-b368-64bb65ffa523"),
+                            Id = new Guid("88cd016a-7b5e-4d07-98bf-0c850d6f5ce4"),
                             Order = 4,
                             Title = "Red Bend",
                             Type = 0
                         },
                         new
                         {
-                            Id = new Guid("bd092cfd-d5eb-4d15-83c3-388fa55de74e"),
+                            Id = new Guid("0bca066c-d1ad-4be9-94f8-c9ab15a81d2c"),
                             Order = 1,
                             Title = "Stark Drama",
                             Type = 1
                         },
                         new
                         {
-                            Id = new Guid("bfa99ab3-50a5-4ef7-a483-d6189e69532f"),
+                            Id = new Guid("a7fe19bd-623b-45cf-bc40-9b41e9b3d650"),
                             Order = 2,
                             Title = "Droopy Reception",
                             Type = 1
                         },
                         new
                         {
-                            Id = new Guid("c82ea2f1-5cab-4418-9937-241993259209"),
+                            Id = new Guid("77c782ad-538e-4653-a7be-5dc4bd43147f"),
                             Order = 3,
                             Title = "Firsthand Vehicle",
                             Type = 1

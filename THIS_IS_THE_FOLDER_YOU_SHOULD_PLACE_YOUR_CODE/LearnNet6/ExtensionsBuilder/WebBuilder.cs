@@ -17,7 +17,7 @@ namespace LearnNet6.ExtensionsBuilder
             builder.Services.AddFluentValidation();
             builder.Services.AddCustomRepository();
             builder.Services.AddCustomExtensions();
-
+            builder.Services.AddSignalR();
             builder.AddAuthentication();
 
             builder.Services.AddAuthorization();
@@ -26,6 +26,7 @@ namespace LearnNet6.ExtensionsBuilder
             builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
             builder.AddSwaggerEx();
             builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+            builder.Services.AddCors();
 
 
             return builder;

@@ -11,6 +11,7 @@ namespace LearnNet6.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Card> Cards { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -19,7 +20,7 @@ namespace LearnNet6.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             string[] roles = new string[] { "Owner", "Administrator", "Manager", "Editor", "Buyer", "Business", "Seller", "Subscriber" };
-            
+
             var addedRoles = new List<ApplicationRole>();
             foreach (var role in roles)
             {
@@ -77,6 +78,64 @@ namespace LearnNet6.Data
                 AccessFailedCount = 0
             });
             builder.Entity<ApplicationUser>().HasData(addedUsers);
+
+            builder.Entity<Card>().HasData(
+                new Card()
+                {
+                    Id = Guid.NewGuid(),
+                    Order = 0,
+                    Title = "Harmless Inside",
+                    Type = CardType.From
+                },
+               new Card()
+               {
+                   Id = Guid.NewGuid(),
+                   Order = 1,
+                   Title = "Unacceptable Figure",
+                   Type = CardType.From
+               },
+               new Card()
+               {
+                   Id = Guid.NewGuid(),
+                   Order = 2,
+                   Title = "Brisk Reality",
+                   Type = CardType.From
+               },
+               new Card()
+               {
+                   Id = Guid.NewGuid(),
+                   Order = 3,
+                   Title = "Overlooked Instruction",
+                   Type = CardType.From
+               },
+               new Card()
+               {
+                   Id = Guid.NewGuid(),
+                   Order = 4,
+                   Title = "Red Bend",
+                   Type = CardType.From
+               },
+               new Card()
+               {
+                   Id = Guid.NewGuid(),
+                   Order = 1,
+                   Title = "Stark Drama",
+                   Type = CardType.To
+               },
+               new Card()
+               {
+                   Id = Guid.NewGuid(),
+                   Order = 2,
+                   Title = "Droopy Reception",
+                   Type = CardType.To
+               },
+               new Card()
+               {
+                   Id = Guid.NewGuid(),
+                   Order = 3,
+                   Title = "Firsthand Vehicle",
+                   Type = CardType.To
+               });
             base.OnModelCreating(builder);
         }
     }
