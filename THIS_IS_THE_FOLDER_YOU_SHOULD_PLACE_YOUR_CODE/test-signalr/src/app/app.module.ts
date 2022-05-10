@@ -13,13 +13,15 @@ import { CardComponent } from './card/card.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CardService } from './shared/card.service';
 import { FormsModule } from '@angular/forms';
+import { CardDragComponent } from './card-drag/card-drag.component';
 @NgModule({
   declarations: [
     AppComponent,
     FirstComponent,
     SecondComponent,
     MainPageComponent,
-    CardComponent
+    CardComponent,
+    CardDragComponent
   ],
   imports: [
     BrowserModule,

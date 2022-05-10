@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+THIS_IS_THE_FOLDER_YOU_SHOULD_PLACE_YOUR_CODE/test-signalr/src/.idea/src.iml
+.idea/*
