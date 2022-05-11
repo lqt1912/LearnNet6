@@ -59,7 +59,7 @@ export class FirstComponent implements OnInit {
             item.estimateValue = x.estimateValue
         }
       });
-      this.todo.forEach(item => {
+      this.done.forEach(item => {
         if (item.id === x.id) {
           item.cardAuthor = x.cardAuthor,
             item.estimateValue = x.estimateValue
@@ -120,7 +120,7 @@ export class FirstComponent implements OnInit {
       return {
         id: x.id,
         title: x.title,
-        order: this.todo.indexOf(x),
+        order: this.noNeed.indexOf(x),
         type: 2,
         cardAuthor: x.cardAuthor,
         estimateValue: x.estimateValue
@@ -131,7 +131,7 @@ export class FirstComponent implements OnInit {
     this.cardService.updateCard(dataToPost).subscribe(x => {
       this.todo = (x as Card[]).filter(t => t.type === 0).sort(x => x.order)
       this.done = (x as Card[]).filter(t => t.type === 1).sort(x => x.order)
-      this._noNeed = (x as Card[]).filter(t => t.type === 2).sort(x => x.order)
+      this.noNeed = (x as Card[]).filter(t => t.type === 2).sort(x => x.order)
 
     });
   }
