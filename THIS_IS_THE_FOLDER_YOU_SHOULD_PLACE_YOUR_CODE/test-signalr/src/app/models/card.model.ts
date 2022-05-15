@@ -4,5 +4,6 @@ export interface  Card{
   order: number,
   type: number,
   cardAuthor: string,
-  estimateValue: number
+  estimateValue: number,
+  assignedTo: string
 }

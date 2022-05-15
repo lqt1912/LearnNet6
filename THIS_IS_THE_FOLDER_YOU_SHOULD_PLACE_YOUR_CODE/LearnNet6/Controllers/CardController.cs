@@ -1,6 +1,9 @@
 ﻿using LearnNet6.Data;
 using LearnNet6.Data.Entity;
 using LearnNet6.SignalR;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -23,6 +26,7 @@ namespace LearnNet6.Controllers
 
         // GET: api/Card
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<IEnumerable<Card>>> GetCards()
         {
             return await _context.Cards.ToListAsync();

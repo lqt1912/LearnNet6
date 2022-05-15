@@ -19,6 +19,9 @@ import {ProfileComponent} from './profile/profile.component';
 import {MsalInterceptor, MsalModule, MsalRedirectComponent} from "@azure/msal-angular";
 import {InteractionType, PublicClientApplication} from "@azure/msal-browser";
 import {environment} from "../environments/environment";
+import {CommonModule} from "@angular/common";
+import {CustomInterceptor} from "./interceptors/custom-interceptor";
+import {GraphUserService} from "./shared/graph-user.service";
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
@@ -34,6 +37,7 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     ProfileComponent
   ],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -44,8 +48,8 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
 
     MsalModule.forRoot(new PublicClientApplication({
       auth: {
-        clientId: 'cde678d6-d30d-466a-8050-fffe1f4e10e5',
-        authority: 'https://login.microsoftonline.com/2dff09ac-2b3b-4182-9953-2b548e0d0b39',
+        clientId:environment.aad.clientId,
+        authority: `https://login.microsoftonline.com/${environment.aad.tenantId}`,
         redirectUri: 'http://localhost:4200'
       },
       cache: {
@@ -60,8 +64,9 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     }, {
       interactionType: InteractionType.Redirect, // MSAL Interceptor Configuration
       protectedResourceMap: new Map([
-        ['https://graph.microsoft.com/v1.0/me', ['user.read']],
-        ['https://localhost:7088/api/',  ['user.read']]
+        ['https://graph.microsoft.com/v1.0/me', ['Directory.Read.All']],
+        ['https://localhost:7088/api/',  [`${environment.aad.clientId}/.default`]],
+        ['https://localhost:7088/UserGraph/GetCurrentUser', ['Directory.Read.All']]
       ])
     })
   ],
@@ -69,7 +74,11 @@ const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigato
     provide: HTTP_INTERCEPTORS,
     useClass: MsalInterceptor,
     multi: true
-  }, CardService],
+  },{
+    provide: HTTP_INTERCEPTORS,
+    useClass: CustomInterceptor,
+    multi: true
+  }, CardService, GraphUserService],
   bootstrap: [AppComponent, MsalRedirectComponent]
 })
 export class AppModule {

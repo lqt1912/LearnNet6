@@ -1,4 +1,4 @@
-<div class="p-2">
+<div class="p-2" *ngIf="users">
   <div class="example-container p-2 border">
     <h2>To do</h2>
 
@@ -13,6 +13,7 @@
       <app-card
         *ngFor="let item of todo"
         [item]="item"
+        [users]="users"
         (changeAuthor)="onChangeAuthor($event)">
       </app-card>
     </div>
@@ -32,6 +33,7 @@
       <app-card
         *ngFor="let item of done"
         [item]="item"
+        [users]="users"
         (changeAuthor)="onChangeAuthor($event)">
       </app-card>
 
@@ -52,6 +54,7 @@
       <app-card
         *ngFor="let item of noNeed"
         [item]="item"
+        [users]="users"
         (changeAuthor)="onChangeAuthor($event)">
       </app-card>
 

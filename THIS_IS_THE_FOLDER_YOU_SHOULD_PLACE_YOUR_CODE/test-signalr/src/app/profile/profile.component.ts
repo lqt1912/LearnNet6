@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 
-const GRAPH_ENDPOINT = 'https://graph.microsoft.com/v1.0/me';
+//const GRAPH_ENDPOINT = 'https://graph.microsoft.com/v1.0/me';
+const GRAPH_ENDPOINT = 'https://localhost:7088/UserGraph/GetCurrentUser';
 
 type ProfileType = {
   givenName?: string,
@@ -15,7 +16,7 @@ type ProfileType = {
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  profile!: ProfileType;
+  profile: ProfileType[] = [];
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
@@ -23,8 +24,9 @@ export class ProfileComponent implements OnInit {
   }
   getProfile() {
     this.http.get(GRAPH_ENDPOINT)
-      .subscribe(profile => {
-        this.profile = profile;
+      .subscribe((profile: any) => {
+        this.profile = profile.value as ProfileType[];
+        console.log(profile)
       });
   }
 }

@@ -1,5 +1,7 @@
 ﻿using LearnNet6.Data;
 using LearnNet6.Data.Entity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
@@ -17,28 +19,22 @@ namespace LearnNet6.ExtensionsBuilder
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddAuthentication().AddJwtBearer(o =>
-            {
-                o.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey
-                        (Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = false,
-                    ValidateIssuerSigningKey = true
-                };
-            });
-
-            //builder.Services.AddAuthentication().AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-            //builder.Services.AddAuthentication()
-            //    .AddJwtBearer(opt =>
+            //builder.Services.AddAuthentication().AddJwtBearer(o =>
+            //{
+            //    o.TokenValidationParameters = new TokenValidationParameters
             //    {
-            //        opt.Audience = configuration["AzureAdJwt:ResourceId"];
-            //        opt.Authority = $"{configuration["AzureAdJwt:Instance"]}{configuration["AzureAdJwt:TenantId"]}";
-            //    });
+            //        ValidIssuer = configuration["Jwt:Issuer"],
+            //        ValidAudience = configuration["Jwt:Audience"],
+            //        IssuerSigningKey = new SymmetricSecurityKey
+            //            (Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateLifetime = false,
+            //        ValidateIssuerSigningKey = true
+            //    };
+            //});
+
+            builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
         }
     }
 }

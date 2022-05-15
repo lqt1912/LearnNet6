@@ -8,6 +8,8 @@ import {CardService} from '../shared/card.service';
 import * as signalR from '@microsoft/signalr';
 import {Card} from "../models/card.model";
 import {environment} from "../../environments/environment";
+import {GraphUserService} from "../shared/graph-user.service";
+
 
 @Component({
   selector: 'app-first',
@@ -15,22 +17,25 @@ import {environment} from "../../environments/environment";
   styleUrls: ['./first.component.scss'],
 })
 export class FirstComponent implements OnInit {
-  constructor(private cardService: CardService) {
+  constructor(private cardService: CardService,
+              private graphUserUservice: GraphUserService) {
   }
 
   todo: Card[] = []
   done: Card[] = []
-  noNeed: Card[] =[]
+  noNeed: Card[] = []
+  users: any[] = [];
+
+  allCards: Card[] = [];
 
   ngOnInit(): void {
+
+    this.graphUserUservice.getAllUsers().subscribe((response: any) => {
+      this.users = response.value;
+    })
+
     this.cardService.getCard().subscribe(x => {
-      console.log(x);
-
-      this.todo = (x as Card[]).filter(t => t.type === 0).sort(x => x.order)
-
-      this.done = (x as Card[]).filter(t => t.type === 1).sort(x => x.order)
-      this.noNeed = (x as Card[]).filter(t => t.type === 2).sort(x => x.order)
-
+      this.updateBoard(x);
     });
 
     const connection = new signalR.HubConnectionBuilder()
@@ -45,38 +50,29 @@ export class FirstComponent implements OnInit {
     });
 
     connection.on("UpdateCardBoard", (x) => {
-      this.todo = (x as Card[]).filter(t => t.type === 0).sort(x => x.order)
-
-      this.done = (x as Card[]).filter(t => t.type === 1).sort(x => x.order)
-      this.noNeed = (x as Card[]).filter(t => t.type === 2).sort(x => x.order)
-
+      this.updateBoard(x);
     });
 
     connection.on("UpdateCard", (x) => {
-      this.done.forEach(item => {
+      this.allCards.forEach(item => {
         if (item.id === x.id) {
-          item.cardAuthor = x.cardAuthor,
-            item.estimateValue = x.estimateValue
+          this.changeValue(item, x)
         }
-      });
-      this.done.forEach(item => {
-        if (item.id === x.id) {
-          item.cardAuthor = x.cardAuthor,
-            item.estimateValue = x.estimateValue
-        }
-      });
-      this.noNeed.forEach(item => {
-        if (item.id === x.id) {
-          item.cardAuthor = x.cardAuthor,
-            item.estimateValue = x.estimateValue
-        }
-      });
+      })
     })
+  }
+
+  changeValue(item: Card, x: any) {
+    item.cardAuthor = x.cardAuthor;
+    item.estimateValue = x.estimateValue;
+    item.assignedTo = x.assignedTo;
+    item.title = x.title;
   }
 
   _done: Card[] = []
   _todo: Card[] = []
-  _noNeed: Card[]= []
+  _noNeed: Card[] = []
+
   drop(event: CdkDragDrop<Card[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
@@ -92,10 +88,7 @@ export class FirstComponent implements OnInit {
         event.currentIndex
       );
     }
-    console.log('previousContainer ' + event.previousContainer.data);
 
-    console.log('container ' + event.container.data);
-    console.log('done', this.done);
     this._done = this.done.map((x) => {
       return {
         id: x.id,
@@ -103,7 +96,8 @@ export class FirstComponent implements OnInit {
         order: this.done.indexOf(x),
         type: 1,
         cardAuthor: x.cardAuthor,
-        estimateValue: x.estimateValue
+        estimateValue: x.estimateValue,
+        assignedTo: x.assignedTo
       };
     });
     this._todo = this.todo.map((x) => {
@@ -113,7 +107,8 @@ export class FirstComponent implements OnInit {
         order: this.todo.indexOf(x),
         type: 0,
         cardAuthor: x.cardAuthor,
-        estimateValue: x.estimateValue
+        estimateValue: x.estimateValue,
+        assignedTo: x.assignedTo
       };
     });
     this._noNeed = this.noNeed.map((x) => {
@@ -123,16 +118,14 @@ export class FirstComponent implements OnInit {
         order: this.noNeed.indexOf(x),
         type: 2,
         cardAuthor: x.cardAuthor,
-        estimateValue: x.estimateValue
+        estimateValue: x.estimateValue,
+        assignedTo: x.assignedTo
       };
     });
     let dataToPost = this._done.concat(this._todo);
     dataToPost = dataToPost.concat(this._noNeed);
     this.cardService.updateCard(dataToPost).subscribe(x => {
-      this.todo = (x as Card[]).filter(t => t.type === 0).sort(x => x.order)
-      this.done = (x as Card[]).filter(t => t.type === 1).sort(x => x.order)
-      this.noNeed = (x as Card[]).filter(t => t.type === 2).sort(x => x.order)
-
+      this.updateBoard(x);
     });
   }
 
@@ -140,5 +133,12 @@ export class FirstComponent implements OnInit {
     this.cardService.updateCardInfo(item).subscribe(x => {
       console.log(x);
     })
+  }
+
+  updateBoard(x: any) {
+    this.allCards = x as Card[];
+    this.todo = this.allCards.filter(t => t.type === 0).sort(x => x.order)
+    this.done = this.allCards.filter(t => t.type === 1).sort(x => x.order)
+    this.noNeed = this.allCards.filter(t => t.type === 2).sort(x => x.order)
   }
 }
