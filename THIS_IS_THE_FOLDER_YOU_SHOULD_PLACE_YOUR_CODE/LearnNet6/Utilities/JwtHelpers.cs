@@ -54,5 +54,14 @@ namespace LearnNet6.Utilities
 
 
         }
+
+        public static string DecodeJwt(string token)
+        {
+       
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            var result = jwtSecurityToken.Claims.First(x => x.Type == "oid").Value;
+            return result;
+        }
     }
 }

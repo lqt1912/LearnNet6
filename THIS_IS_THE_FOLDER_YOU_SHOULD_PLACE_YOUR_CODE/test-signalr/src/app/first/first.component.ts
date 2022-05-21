@@ -9,6 +9,8 @@ import * as signalR from '@microsoft/signalr';
 import {Card} from "../models/card.model";
 import {environment} from "../../environments/environment";
 import {GraphUserService} from "../shared/graph-user.service";
+import {PushNotificationService} from "../shared/push-message.service";
+import {UIService} from "../shared/ui.service";
 
 
 @Component({
@@ -18,7 +20,9 @@ import {GraphUserService} from "../shared/graph-user.service";
 })
 export class FirstComponent implements OnInit {
   constructor(private cardService: CardService,
-              private graphUserUservice: GraphUserService) {
+              private graphUserService: GraphUserService,
+              private pushNotificationService: PushNotificationService,
+              private uiService: UIService) {
   }
 
   todo: Card[] = []
@@ -27,13 +31,11 @@ export class FirstComponent implements OnInit {
   users: any[] = [];
 
   allCards: Card[] = [];
-
+  currentMessage: any;
   ngOnInit(): void {
-
-    this.graphUserUservice.getAllUsers().subscribe((response: any) => {
-      this.users = response.value;
-    })
-
+    this.graphUserService.getAllUsers('').subscribe((x: any) => {
+      this.users = x.value;
+    });
     this.cardService.getCard().subscribe(x => {
       this.updateBoard(x);
     });
@@ -59,7 +61,11 @@ export class FirstComponent implements OnInit {
           this.changeValue(item, x)
         }
       })
-    })
+    });
+
+
+  this.pushNotificationService.receiveMessage()
+
   }
 
   changeValue(item: Card, x: any) {

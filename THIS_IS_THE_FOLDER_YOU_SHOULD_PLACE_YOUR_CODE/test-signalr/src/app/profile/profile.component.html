@@ -1,11 +1,11 @@
 
-<div *ngFor="let item of profile">
+<div >
   <br>
   <div>
-    <p><strong>First Name: </strong> {{item?.givenName}}</p>
-    <p><strong>Last Name: </strong> {{item?.surname}}</p>
-    <p><strong>Email: </strong> {{item?.userPrincipalName}}</p>
-    <p><strong>Id: </strong> {{item?.id}}</p>
+    <p><strong>Display name: </strong> {{profile?.displayName}}</p>
+    <p><strong>User type: </strong> {{profile?.userType}}</p>
+    <p><strong>Email: </strong> {{profile?.userPrincipalName}}</p>
+    <p><strong>Id: </strong> {{profile?.id}}</p>
   </div>
 
 </div>

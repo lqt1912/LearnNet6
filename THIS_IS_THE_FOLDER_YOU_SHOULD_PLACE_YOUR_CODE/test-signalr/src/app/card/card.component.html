@@ -31,24 +31,39 @@
   </div>
 
   <div class="form-group col-12 row mb-1">
-    <label class="col-4 col-form-label  ">Author</label>
-    <div class="col-8 pl-0 pr-0">
-      <input type="text" class="form-control " [(ngModel)]="item.cardAuthor"
-             (ngModelChange)="onChangeAuthor(item)">
-    </div>
+    <label class="col-4 col-form-label select-box  ">Card author</label>
+    <ng-select class="col-8 form-control "
+               [items]="users"
+               #select
+               labelForId="users"
+               bindLabel="displayName"
+               bindValue="id"
+               [(ngModel)]="item.cardAuthor"
+               [virtualScroll]="true"
+               (ngModelChange)="onChangeAuthor(item)"
+               (search)="onSearch($event)">
+
+      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+        <span>{{item.displayName}}</span>
+        <br>
+        <span>{{item.userPrincipalName}}</span>
+      </ng-template>
+    </ng-select>
   </div>
 
 
   <div class="form-group col-12 row mb-1">
-    <label class="col-4 col-form-label select-box  ">User</label>
-    <ng-select class="col-8 form-control " [items]="users"
+    <label class="col-4 col-form-label select-box  ">Assigned to</label>
+    <ng-select class="col-8 form-control "
+               [items]="users"
                #select
                labelForId="users"
                bindLabel="displayName"
                bindValue="id"
                [(ngModel)]="item.assignedTo"
                [virtualScroll]="true"
-               (ngModelChange)="onChangeAuthor(item)">
+               (ngModelChange)="onChangeAuthor(item)"
+    (search)="onSearch($event)">
 
       <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
         <span>{{item.displayName}}</span>

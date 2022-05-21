@@ -1,4 +1,5 @@
 ﻿using LearnNet6.Data.Entity;
+using LearnNet6.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,8 @@ namespace LearnNet6.Data
         public DbSet<Address> Addresses { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Card> Cards { get; set; }
+        public DbSet<AdUser> AdUsers { get; set; }
+        public DbSet<NotificationToken> NotificationToken { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

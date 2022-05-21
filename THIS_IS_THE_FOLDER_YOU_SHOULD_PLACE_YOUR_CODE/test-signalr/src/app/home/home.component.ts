@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MsalBroadcastService, MsalService} from "@azure/msal-angular";
 import {EventMessage, EventType, InteractionStatus} from "@azure/msal-browser";
 import {filter} from "rxjs/operators";
+import {GraphUserService} from "../shared/graph-user.service";
 
 @Component({
   selector: 'app-home',
@@ -11,8 +12,10 @@ import {filter} from "rxjs/operators";
 export class HomeComponent implements OnInit {
 
   loginDisplay = false;
-
-  constructor(private authService: MsalService, private msalBroadcastService: MsalBroadcastService) {
+  users: any[] = []
+  constructor(private authService: MsalService,
+              private msalBroadcastService: MsalBroadcastService,
+              private graphUserService: GraphUserService) {
   }
 
   ngOnInit(): void {
@@ -21,7 +24,7 @@ export class HomeComponent implements OnInit {
         filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS),
       )
       .subscribe((result: EventMessage) => {
-        console.log(result);
+        console.log(result)
       });
     this.msalBroadcastService.inProgress$
       .pipe(

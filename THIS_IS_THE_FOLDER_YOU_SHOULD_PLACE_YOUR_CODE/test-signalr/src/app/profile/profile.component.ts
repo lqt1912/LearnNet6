@@ -1,32 +1,35 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Component, OnInit} from '@angular/core';
+import {GraphUserService} from "../shared/graph-user.service";
+import {Profile} from "../models/profile.model";
+import {PushNotificationService} from "../shared/push-message.service";
+import {UIService} from "../shared/ui.service";
 
-//const GRAPH_ENDPOINT = 'https://graph.microsoft.com/v1.0/me';
-const GRAPH_ENDPOINT = 'https://localhost:7088/UserGraph/GetCurrentUser';
-
-type ProfileType = {
-  givenName?: string,
-  surname?: string,
-  userPrincipalName?: string,
-  id?: string
-};
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  profile: ProfileType[] = [];
-  constructor(private http: HttpClient) { }
+  profile: Profile | undefined = undefined;
+
+  constructor(private graphUserService: GraphUserService,
+              private pushMessageService: PushNotificationService,
+              private uiService: UIService ) {
+  }
 
   ngOnInit(): void {
     this.getProfile();
+    this.pushMessageService.requestPermission().subscribe(res => {
+        console.log(res);
+        this.uiService.showNotificationToast(5000, res);
+      }
+    )
   }
+
   getProfile() {
-    this.http.get(GRAPH_ENDPOINT)
-      .subscribe((profile: any) => {
-        this.profile = profile.value as ProfileType[];
-        console.log(profile)
-      });
+    this.graphUserService.decodeToken().subscribe((res: any) => {
+      this.profile = res as Profile;
+    })
   }
 }

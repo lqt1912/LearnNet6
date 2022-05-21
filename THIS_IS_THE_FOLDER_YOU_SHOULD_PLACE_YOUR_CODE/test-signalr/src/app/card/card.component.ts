@@ -12,8 +12,9 @@ export class CardComponent implements OnInit {
   @Input() item: Card | undefined;
   @Output() changeAuthor = new EventEmitter<Card>();
   @Input() users: any;
+  searchedUsers: any;
 
-  constructor(private graphUserUservice: GraphUserService) {
+  constructor(private graphUserService: GraphUserService) {
   }
 
   myPlaceholder: string = "Select user"
@@ -28,5 +29,11 @@ export class CardComponent implements OnInit {
 
   selectUser(data: any) {
     console.log(data)
+  }
+
+  onSearch(event: any) {
+    this.graphUserService.getAllUsers(event.term).subscribe((x: any) => {
+      this.users = x.value;
+    });
   }
 }

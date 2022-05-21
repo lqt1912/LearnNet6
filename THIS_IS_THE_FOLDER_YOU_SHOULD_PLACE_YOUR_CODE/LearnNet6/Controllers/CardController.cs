@@ -1,6 +1,8 @@
-﻿using LearnNet6.Data;
+﻿using FirebaseAdmin.Messaging;
+using LearnNet6.Data;
 using LearnNet6.Data.Entity;
 using LearnNet6.SignalR;
+using LearnNet6.Utilities;
 using Microsoft.AspNetCore.Authentication.AzureAD.UI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -62,6 +64,34 @@ namespace LearnNet6.Controllers
             {
                 await _context.SaveChangesAsync();
                 await _hubContext.Clients.All.UpdateCard(card);
+
+                var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
+                var userId = JwtHelpers.DecodeJwt(accessToken);
+                var currentUser = await _context.AdUsers.FirstOrDefaultAsync(x => x.id == userId);
+                if (currentUser !=null)
+                {
+                    var notificationToken = _context.NotificationToken.Where(x => x.UserId == currentUser.Id);
+                    foreach (var token in notificationToken)
+                    {
+                        Message mes = new Message()
+                        {
+                            Token = token.Value,
+
+                            Data = new Dictionary<string, string>()
+                            {
+                                {"notification","Có thằng mới chỉnh data" }
+                            },
+                            Notification = new Notification()
+                            {
+                                Title = "Quản trị viên CoStudy",
+                                Body = "Có thằng mới chỉnh data"
+                            }
+                        };
+                        string response = await FirebaseMessaging.DefaultInstance.SendAsync(mes).ConfigureAwait(true);
+                    }
+                   
+                }
+                
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -120,6 +150,33 @@ namespace LearnNet6.Controllers
                 await _context.SaveChangesAsync();
             }
             await _hubContext.Clients.All.UpdateCardBoard(cards);
+
+            var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
+            var userId = JwtHelpers.DecodeJwt(accessToken);
+            var currentUser = await _context.AdUsers.FirstOrDefaultAsync(x => x.id == userId);
+            if (currentUser != null)
+            {
+                var notificationToken = _context.NotificationToken.Where(x => x.UserId == currentUser.Id);
+                foreach (var token in notificationToken)
+                {
+                    Message mes = new Message()
+                    {
+                        Token = token.Value,
+
+                        Data = new Dictionary<string, string>()
+                            {
+                                {"notification","Có thằng mới chỉnh data" }
+                            },
+                        Notification = new Notification()
+                        {
+                            Title = "Tét nofitication",
+                            Body = "Có thằng mới chỉnh data"
+                        }
+                    };
+                    string response = await FirebaseMessaging.DefaultInstance.SendAsync(mes).ConfigureAwait(true);
+                }
+
+            }
             return Ok(cards);
         }
     }

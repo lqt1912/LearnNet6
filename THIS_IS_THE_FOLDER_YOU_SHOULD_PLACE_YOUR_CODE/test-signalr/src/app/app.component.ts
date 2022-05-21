@@ -3,6 +3,8 @@ import {MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalSer
 import {Subject} from "rxjs";
 import {filter, takeUntil} from 'rxjs/operators';
 import {InteractionStatus, RedirectRequest} from "@azure/msal-browser";
+import {GraphUserService} from "./shared/graph-user.service";
+import {PushNotificationService} from "./shared/push-message.service";
 
 @Component({
   selector: 'app-root',
@@ -18,7 +20,9 @@ export class AppComponent implements OnInit {
 
   constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
               private broadcastService: MsalBroadcastService,
-              private authService: MsalService) {
+              private authService: MsalService,
+              private userGraphService: GraphUserService,
+              private pushMessageService: PushNotificationService) {
 
   }
 
@@ -30,6 +34,9 @@ export class AppComponent implements OnInit {
         takeUntil(this._destroying$)
       )
       .subscribe(() => {
+
+        console.log("Login success");
+
         this.setLoginDisplay();
       })
 
@@ -45,6 +52,15 @@ export class AppComponent implements OnInit {
 
   setLoginDisplay() {
     this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+    this.pushMessageService.requestPermission().subscribe(token => {
+      if (token) {
+
+
+        this.userGraphService.registerToken(token).subscribe(response => {
+          console.log(response);
+        })
+      }
+    })
   }
 
   ngOnDestroy(): void {
@@ -53,8 +69,17 @@ export class AppComponent implements OnInit {
   }
 
   logout() { // Add log out function here
-    this.authService.logoutRedirect({
-      postLogoutRedirectUri: 'http://localhost:4200'
-    });
+
+    this.pushMessageService.requestPermission().subscribe(token => {
+      if (token) {
+        this.userGraphService.removeToken(token).subscribe(response => {
+
+          this.authService.logoutRedirect({
+            postLogoutRedirectUri: 'http://localhost:4200'
+          })
+        })
+      }
+    })
+
   }
 }

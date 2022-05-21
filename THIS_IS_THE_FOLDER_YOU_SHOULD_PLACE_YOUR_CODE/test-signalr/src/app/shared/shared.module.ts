@@ -5,6 +5,9 @@ import {MatInputModule} from '@angular/material/input';
 import {DndModule} from "ngx-drag-drop";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { NotificationToastComponent } from './notification-toast/notification-toast.component';
+import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {CommonModule} from "@angular/common";
 
 @NgModule({
   imports: [
@@ -14,7 +17,9 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
     DndModule,
     NgSelectModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSnackBarModule,
+    CommonModule
   ],
   exports: [
     MatCardModule,
@@ -23,7 +28,11 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
     DndModule,
     NgSelectModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSnackBarModule
+  ],
+  declarations: [
+    NotificationToastComponent
   ]
 })
 export class SharedMNodule {
