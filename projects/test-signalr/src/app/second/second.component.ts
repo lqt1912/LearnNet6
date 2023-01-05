@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {DndDropEvent} from "ngx-drag-drop";
-import {CardService} from "../shared/card.service";
-import {Card} from "../models/card.model";
+import {ChangeDetectorRef, Component, ElementRef, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+
+import {PerformanceObjectService} from "../shared/performance-object.service";
+import {PerformanceObject, PerformanceObjectResponse} from "../models/performance-object.model";
+import {forkJoin, Observable, of} from "rxjs";
+import {logEvent} from "@angular/fire/analytics";
 
 @Component({
   selector: 'app-second',
@@ -10,52 +12,63 @@ import {Card} from "../models/card.model";
 })
 export class SecondComponent implements OnInit {
 
-  constructor(private _cardService: CardService) {
+  constructor(private performanceObjectService: PerformanceObjectService, private cdr: ChangeDetectorRef) {
   }
 
-  todo: Card[] = []
-  done: Card[] = []
-  noNeed: Card[] = []
+  currentSkip: number = 0;
+  currentCount: number = 10;
+  messageList$: Observable<PerformanceObject[]> = new Observable<PerformanceObject[]>();
+
+  @ViewChild("messageBoard")
+  private messageBoard!: ElementRef;
 
   ngOnInit(): void {
-    this._cardService.getCard().subscribe(x => {
-
-      this.todo = (x as Card[]).filter(t => t.type === 0).sort(x => x.order)
-
-      this.done = (x as Card[]).filter(t => t.type === 1).sort(x => x.order)
-
-    });
+    this.performanceObjectService.GetCardPaged(this.currentSkip, this.currentCount).subscribe((response: PerformanceObjectResponse) => {
+      console.log("response", response);
+      this.messageList$ = of(response.records);
+      this.cdr.detectChanges();
+      const el = this.messageBoard.nativeElement;
+      this.messageBoard.nativeElement.scrollTop = Math.max(0, el.scrollHeight - el.offsetHeight);
+    })
   }
 
-  onDragover(event: DragEvent) {
+  loadMore(): void {
+    this.currentSkip = this.currentSkip + this.currentCount;
 
-    console.log("dragover", JSON.stringify(event, null, 2));
+    this.performanceObjectService.GetCardPaged(this.currentSkip, this.currentCount).subscribe((response: PerformanceObjectResponse) => {
+      let recordsOb = of(response.records);
+      let sourceOb = this.messageList$;
+      if (recordsOb) {
+        forkJoin({
+          source: sourceOb,
+          destination: recordsOb
+        }).subscribe((val) => {
+            let newList = val.destination.concat(val.source);
+            this.messageList$ = of(newList);
+          }
+        )
+      }
+    })
   }
 
-  onDropToDo(event: DndDropEvent) {
+  addMessage() {
 
-    console.log("dropped", JSON.stringify(event, null, 2));
-  }
-
-  onDropDone(event: DndDropEvent) {
-
-    console.log("dropped", JSON.stringify(event, null, 2));
-  }
-
-  onChangeAuthor(item: Card) {
-    console.log(item)
-  }
-
-  onDropNoNeed(event: DndDropEvent) {
-    this.noNeed.push(event.data)
-    console.log("dropped", JSON.stringify(event, null, 2));
-  }
-
-  onMoveCard = (event: Card) => {
-    let _a = this.todo.find(x => x.id === event.id);
-    if (_a) {
-      this.todo = this.todo.filter(x => x.id != event.id);
-    }
-    console.log("Card move: ", event);
+    this.performanceObjectService.PostPerfomanceObject().subscribe((res: PerformanceObject) => {
+      let recordsOb = of(res);
+      let sourceOb = this.messageList$;
+      if (recordsOb) {
+        forkJoin({
+          source: sourceOb,
+          destination: recordsOb
+        }).subscribe((val) => {
+            val.source.push(val.destination);
+            this.messageList$ = of(val.source);
+            this.cdr.detectChanges();
+            const el = this.messageBoard.nativeElement;
+            this.messageBoard.nativeElement.scrollTop = Math.max(0, el.scrollHeight - el.offsetHeight);
+          }
+        )
+      }
+    })
   }
 }

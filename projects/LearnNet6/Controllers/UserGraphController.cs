@@ -36,7 +36,7 @@ namespace LearnNet6.Controllers
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                request.AddParameter("$search", $"\"displayName:{keyword}\" OR \"userPrincipalName:{keyword}\"  OR \"mail:{keyword}\"");
+                request.AddParameter("$search", $"\"displayName:{keyword}\" OR \"userPrincipalName:{keyword}\"  OR \"mail:{keyword}\" OR \"id:{keyword}\"");
             }
             var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString();
             request.AddHeader("Authorization", accessToken);
@@ -52,6 +52,30 @@ namespace LearnNet6.Controllers
             return Ok(1);
 
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            RestSharp.RestClient restClient = new RestSharp.RestClient("https://graph.microsoft.com/v1.0");
+
+            RestSharp.IRestRequest request = new RestSharp.RestRequest($"users/{id}", RestSharp.Method.GET);
+
+          
+            var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString();
+            request.AddHeader("Authorization", accessToken);
+            request.AddHeader("ConsistencyLevel", "eventual");
+            var result = restClient.Execute(request);
+
+            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var graphUserDto = System.Text.Json.JsonSerializer.Deserialize<UserGraphViewModel>(result.Content);
+
+                return Ok(graphUserDto);
+            }
+            return Ok(1);
+
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> DecodeToken()
@@ -71,15 +95,23 @@ namespace LearnNet6.Controllers
 
             var firstSheet = package.Workbook.Worksheets["exportUser"];
 
-            for (int row = 2; row < 11; row++)
+            for (int row = 2; row < 6; row++)
             {
 
                 AdUser record = new AdUser();
                 PropertyInfo[] properties = typeof(AdUser).GetProperties();
                 for (int i = 0; i < properties.Count() - 1; i++)
                 {
-                    properties[i].SetValue(record, firstSheet.Cells[row, i + 1].Text);
+                    try
+                    {
+                        properties[i].SetValue(record, firstSheet.Cells[row, i + 1].Text);
+
+                    } catch (Exception)
+                    {
+                        //do nothing
+                    }
                 }
+              
 
                 var exist = _context.AdUsers.AsNoTracking().FirstOrDefault(x => x.id == record.id);
                 if (exist == null)
@@ -123,7 +155,7 @@ namespace LearnNet6.Controllers
                     return Ok($"Saved: {deviceToken}");
                 }
                 else return Ok($"Not saved: {deviceToken}");
-               
+
             }
             else return Ok($"Not saved: {deviceToken}, null User");
         }

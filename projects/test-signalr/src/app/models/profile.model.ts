@@ -30,3 +30,4 @@ export interface Profile {
   createdDateTime: string
   id: string
 }
+export interface User extends Profile {}

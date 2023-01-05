@@ -23,4 +23,9 @@ export class GraphUserService {
   removeToken(token: string){
     return this.httpClient.get(`https://localhost:7088/UserGraph/RemoveToken?deviceToken=${token}`,{responseType: 'text'});
   }
+
+  getUserById(id: string){
+    let GRAPH_ENDPOINT = `https://localhost:7088/UserGraph/GetUserById/${id}`;
+    return this.httpClient.get(GRAPH_ENDPOINT)
+  }
 }

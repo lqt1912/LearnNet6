@@ -26,6 +26,8 @@ import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFireMessagingModule} from "@angular/fire/compat/messaging";
 import {PushNotificationService} from "./shared/push-message.service";
 import {UIService} from "./shared/ui.service";
+import {SignalRService} from "./shared/signalr.service";
+import {PerformanceObjectService} from "./shared/performance-object.service";
 
 const isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1;
 
@@ -97,7 +99,9 @@ const firebaseConfig = {
     CardService,
     GraphUserService,
     PushNotificationService,
-    UIService],
+    UIService,
+    SignalRService,
+    PerformanceObjectService],
   bootstrap: [AppComponent, MsalRedirectComponent]
 })
 export class AppModule {

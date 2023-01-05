@@ -63,7 +63,7 @@ namespace LearnNet6.Controllers
             try
             {
                 await _context.SaveChangesAsync();
-                await _hubContext.Clients.All.SendAsync("UpdateCardFromController", card);
+                //await _hubContext.Clients.All.SendAsync("UpdateCardFromController", card);
                 var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
                 var userId = JwtHelpers.DecodeJwt(accessToken);
                 var currentUser = await _context.AdUsers.FirstOrDefaultAsync(x => x.id == userId);
@@ -104,7 +104,7 @@ namespace LearnNet6.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(card);
         }
 
         // POST: api/Card
@@ -139,7 +139,7 @@ namespace LearnNet6.Controllers
         {
             return _context.Cards.Any(e => e.Id == id);
         }
-
+            
         [HttpPost("update-all-card")]
         public async Task<IActionResult> UpdateAllCard(List<Card> cards)
         {
@@ -148,7 +148,7 @@ namespace LearnNet6.Controllers
                 _context.Cards.Update(item);
                 await _context.SaveChangesAsync();
             }
-            await _hubContext.Clients.All.SendAsync("UpdateBoardFromServer", cards);
+            //await _hubContext.Clients.All.SendAsync("UpdateBoardFromServer", cards);
 
             var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
             var userId = JwtHelpers.DecodeJwt(accessToken);
@@ -178,5 +178,7 @@ namespace LearnNet6.Controllers
             }
             return Ok(cards);
         }
+
+
     }
 }

@@ -72,11 +72,15 @@ export class AppComponent implements OnInit {
 
     this.pushMessageService.requestPermission().subscribe(token => {
       if (token) {
-        this.userGraphService.removeToken(token).subscribe(response => {
+        this.userGraphService.removeToken(token).subscribe(() => {
 
           this.authService.logoutRedirect({
             postLogoutRedirectUri: 'http://localhost:4200'
           })
+        })
+      } else {
+        this.authService.logoutRedirect({
+          postLogoutRedirectUri: 'http://localhost:4200'
         })
       }
     })

@@ -24,8 +24,9 @@
       <strong class="col-6 mb-0 mt-1">Est.</strong>
       <div class="col-6 p-0">
 
-        <input type="text" class="form-control border-0" [(ngModel)]="item.estimateValue"
-               (ngModelChange)="onChangeAuthor(item)">
+        <input type="text" class="form-control border-0"
+               [(ngModel)]="item.estimateValue"
+               (ngModelChange)="estimateValueTypeAhead($event)">
       </div>
     </div>
   </div>
@@ -33,17 +34,18 @@
   <div class="form-group col-12 row mb-1">
     <label class="col-4 col-form-label select-box  ">Card author</label>
     <ng-select class="col-8 form-control "
-               [items]="users"
+               [items]="users$ | async"
                #select
                labelForId="users"
                bindLabel="displayName"
                bindValue="id"
                [(ngModel)]="item.cardAuthor"
                [virtualScroll]="true"
-               (ngModelChange)="onChangeAuthor(item)"
-               (search)="onSearch($event)">
+               (change)="onChangeAuthor(item)"
+               [typeahead]="cardAuthorTypeAhead$"
+               [loading]="cardAuthorLoading">
 
-      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+      <ng-template ng-option-tmp let-item="item">
         <span>{{item.displayName}}</span>
         <br>
         <span>{{item.userPrincipalName}}</span>
@@ -55,7 +57,7 @@
   <div class="form-group col-12 row mb-1">
     <label class="col-4 col-form-label select-box  ">Assigned to</label>
     <ng-select class="col-8 form-control "
-               [items]="users"
+               [items]="users$ | async"
                #select
                labelForId="users"
                bindLabel="displayName"
@@ -63,7 +65,7 @@
                [(ngModel)]="item.assignedTo"
                [virtualScroll]="true"
                (ngModelChange)="onChangeAuthor(item)"
-    (search)="onSearch($event)">
+               (search)="onSearch($event)">
 
       <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
         <span>{{item.displayName}}</span>

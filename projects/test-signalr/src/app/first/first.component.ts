@@ -12,6 +12,8 @@ import {GraphUserService} from "../shared/graph-user.service";
 import {PushNotificationService} from "../shared/push-message.service";
 import {UIService} from "../shared/ui.service";
 import {HubConnection} from "@microsoft/signalr";
+import {Profile} from "../models/profile.model";
+import {SignalRService} from "../shared/signalr.service";
 
 
 @Component({
@@ -23,51 +25,41 @@ export class FirstComponent implements OnInit {
   constructor(private cardService: CardService,
               private graphUserService: GraphUserService,
               private pushNotificationService: PushNotificationService,
-              private uiService: UIService) {
+              private uiService: UIService,
+              private sigalrService: SignalRService) {
   }
 
   todo: Card[] = []
   done: Card[] = []
   noNeed: Card[] = []
-  users: any[] = [];
 
   allCards: Card[] = [];
   currentMessage: any;
-
+  profile: Profile | undefined = undefined;
   ngOnInit(): void {
-    this.graphUserService.getAllUsers('').subscribe((x: any) => {
-      this.users = x.value;
-    });
+
     this.cardService.getCard().subscribe(x => {
-      this.updateBoard(x);
+      this.initBoard(x);
+    });
+    this.profile = JSON.parse(<string>localStorage.getItem('profile'));
+
+    this.sigalrService.initConnection();
+    this.sigalrService.startConnection()?.then(()=>{
+      this.sigalrService.joinGroup(this.profile?.department);
     });
 
-    const connection = new signalR.HubConnectionBuilder()
-      .configureLogging(signalR.LogLevel.Information)
-      .withUrl(environment.serverUrl + 'signalRHub')
-      .build();
+    this.sigalrService.listenUpdateBoardFromServer();
+    this.updateBoard();
 
-    connection.start().then(function () {
-      connection.invoke('SendCardBoard','Test message from client');
-      console.log('SignalR Connected!');
-    }).catch(function (err:any) {
-      return console.error(err.toString());
-    });
-
-    connection.on("UpdateBoardFromServer", (x: any) => {
-      this.updateBoard(x);
-    });
-    connection.on("ReceiveCardBoard", (x: any) => {
-      console.log('ReceiveCardBoard',x)
-    });
-    connection.on("UpdateCardFromController", (x: any) => {
-      this.allCards.forEach(item => {
-        if (item.id === x.id) {
-          this.changeValue(item, x)
-        }
-      })
-    });
-
+    this.sigalrService.onReceiveCardBoard();
+    this.sigalrService.onReceiveMessageGroup();
+    this.sigalrService.onSingleCardUpdate();
+    this.sigalrService.singleCardUpdate.subscribe((card: Card) => {
+      const _card = this.allCards.find(x => x.id === card.id);
+      if (_card) {
+        this.changeValue(_card, card);
+      }
+    })
     this.pushNotificationService.receiveMessage()
 
   }
@@ -134,23 +126,35 @@ export class FirstComponent implements OnInit {
     });
     let dataToPost = this._done.concat(this._todo);
     dataToPost = dataToPost.concat(this._noNeed);
-    this.cardService.updateCard(dataToPost).subscribe(x => {
-      this.updateBoard(x);
-
+    this.cardService.updateCard(dataToPost).subscribe((x) => {
+      this.initBoard(x);
+      console.log('card updadted', x)
+      this.sigalrService.invokeUpdateBoard(x as Card[]);
     });
   }
 
   onChangeAuthor(item: Card) {
     this.cardService.updateCardInfo(item).subscribe(x => {
-      console.log(x);
+      this.sigalrService.invokeSingleCardUpdate(x as Card);
     })
   }
 
-  updateBoard(x: any) {
+  updateBoard() {
+    this.sigalrService.cards.subscribe((cards: Card[]) =>{
+      this.allCards = cards;
+      this.todo = this.allCards.filter(t => t.type === 0).sort(x => x.order)
+      this.done = this.allCards.filter(t => t.type === 1).sort(x => x.order)
+      this.noNeed = this.allCards.filter(t => t.type === 2).sort(x => x.order);
+      this.sigalrService.invokeSendCardBoard();
+      this.sigalrService.invokeSendMessageGroup(this.profile?.department);
+    })
+
+  }
+
+  initBoard(x: any) {
     this.allCards = x as Card[];
     this.todo = this.allCards.filter(t => t.type === 0).sort(x => x.order)
     this.done = this.allCards.filter(t => t.type === 1).sort(x => x.order)
     this.noNeed = this.allCards.filter(t => t.type === 2).sort(x => x.order);
-
   }
 }

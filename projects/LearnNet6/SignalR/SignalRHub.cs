@@ -5,18 +5,28 @@ namespace LearnNet6.SignalR
 {
     public class SignalRHub : Hub
     {
-        Task JoinGroup(string groupName)
+        public async Task JoinGroup(string groupName)
         {
-            return Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
 
         public async Task SendCardBoard(string message)
         {
             await Clients.All.SendAsync("ReceiveCardBoard", message);
         }
-        Task UpdateCard(Card card)
+
+        public async Task SendMessageGroup(string groupName, string message)
         {
-            return Clients.All.SendAsync("UpdateCard", card);
+            await Clients.Group(groupName).SendAsync("ReceiveMessageGroup",message);
+        }
+        public async Task UpdateCard(Card card)
+        {
+            await Clients.All.SendAsync("UpdateCard", card);
+        }
+
+        public async Task UpdateBoard(Card[] cards)
+        {
+            await Clients.All.SendAsync("UpdateBoardFromServer", cards);
         }
     }
 }

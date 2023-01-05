@@ -4,6 +4,8 @@ import {GraphUserService} from "../shared/graph-user.service";
 import {Profile} from "../models/profile.model";
 import {PushNotificationService} from "../shared/push-message.service";
 import {UIService} from "../shared/ui.service";
+import * as signalR from "@microsoft/signalr";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +24,7 @@ export class ProfileComponent implements OnInit {
     this.getProfile();
     this.pushMessageService.requestPermission().subscribe(res => {
         console.log(res);
-        this.uiService.showNotificationToast(5000, res);
+        this.uiService.showNotificationToast(1000, 'Token loaded');
       }
     )
   }
@@ -30,6 +32,8 @@ export class ProfileComponent implements OnInit {
   getProfile() {
     this.graphUserService.decodeToken().subscribe((res: any) => {
       this.profile = res as Profile;
+      localStorage.setItem('profile', JSON.stringify(this.profile));
+
     })
   }
 }
