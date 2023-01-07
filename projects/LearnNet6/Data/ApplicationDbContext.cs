@@ -18,6 +18,11 @@ namespace LearnNet6.Data
         public DbSet<PerfomanceObject> PerfomanceObject { get; set; }
         public DbSet<PerformanceTable> NoPerformanceTable { get; set; }
 
+        public DbSet<MessageGroup> MessageGroup { get; set; }
+        public DbSet<GroupMember> GroupMember { get; set; }
+        public DbSet<MessageType> MessageType { get; set; }
+        public DbSet<MessageItem> MessageItem { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

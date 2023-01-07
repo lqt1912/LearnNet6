@@ -13,6 +13,10 @@ namespace LearnNet6.Data.Repositories
             services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddTransient<IPerformanceObjectRepository, PerformanceObjectRepository>();
             services.AddTransient<IPerformanceTableRepository, PerformanceTableRepository>();
+            services.AddTransient<IGroupMemberRepository, GroupMemberRepository>();
+            services.AddTransient<IMessageGroupRepository, MessageGroupRepository>();
+            services.AddTransient<IMessageItemRepository, MessageItemRepository>();
+            services.AddTransient<IMessageTypeRepository, MessageTypeRepository>();
 
 
             var googleCredential = GoogleCredential.FromFile(@"wwwroot/angular-demo-8117d-firebase-adminsdk-ukil5-5095ca4481.json");

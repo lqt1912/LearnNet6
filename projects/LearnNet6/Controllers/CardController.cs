@@ -17,6 +17,9 @@ namespace LearnNet6.Controllers
     [ApiController]
     public class CardController : ControllerBase
     {
+
+
+
         private readonly ApplicationDbContext _context;
         private readonly IHubContext<SignalRHub> _hubContext;
 

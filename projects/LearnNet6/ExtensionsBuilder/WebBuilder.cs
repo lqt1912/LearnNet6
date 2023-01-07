@@ -17,6 +17,7 @@ namespace LearnNet6.ExtensionsBuilder
             builder.Services.AddFluentValidation();
             builder.Services.AddCustomRepository();
             builder.Services.AddCustomExtensions();
+            //builder.Services.Configure<NCacheConfiguration>(builder.Configuration.GetSection("NCacheConfiguration"));
             builder.Services.AddSignalR(options =>
             {
                 options.EnableDetailedErrors = true;
