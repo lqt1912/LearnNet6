@@ -33,7 +33,6 @@ export class ProfileComponent implements OnInit {
     this.graphUserService.decodeToken().subscribe((res: any) => {
       this.profile = res as Profile;
       localStorage.setItem('profile', JSON.stringify(this.profile));
-
     })
   }
 }

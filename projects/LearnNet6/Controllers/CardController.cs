@@ -32,9 +32,18 @@ namespace LearnNet6.Controllers
         // GET: api/Card
         [HttpGet]
         [Authorize(AuthenticationSchemes = "Bearer")]
-        public async Task<ActionResult<IEnumerable<Card>>> GetCards()
+        public async Task<ActionResult<object>> GetCards()
         {
-            return await _context.Cards.ToListAsync();
+            var query = _context.Cards.AsEnumerable();
+            var todo = query.Where(x => x.Type == CardType.ToDo);
+            var done = query.Where(x => x.Type == CardType.Done);
+            var noNeed = query.Where(x => x.Type == CardType.NoNeed);
+
+            return Ok(new { 
+                todo= todo, 
+                done= done, 
+                noNeed=noNeed
+            });
         }
 
         // GET: api/Card/5
@@ -66,33 +75,34 @@ namespace LearnNet6.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+               
                 //await _hubContext.Clients.All.SendAsync("UpdateCardFromController", card);
-                var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
-                var userId = JwtHelpers.DecodeJwt(accessToken);
-                var currentUser = await _context.AdUsers.FirstOrDefaultAsync(x => x.id == userId);
-                if (currentUser !=null)
-                {
-                    var notificationToken = _context.NotificationToken.Where(x => x.UserId == currentUser.Id);
-                    foreach (var token in notificationToken)
-                    {
-                        Message mes = new Message()
-                        {
-                            Token = token.Value,
+                //var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
+                //var userId = JwtHelpers.DecodeJwt(accessToken);
+                //var currentUser = await _context.AdUsers.FirstOrDefaultAsync(x => x.id == userId);
+                //if (currentUser !=null)
+                //{
+                //    var notificationToken = _context.NotificationToken.Where(x => x.UserId == currentUser.Id);
+                //    foreach (var token in notificationToken)
+                //    {
+                //        Message mes = new Message()
+                //        {
+                //            Token = token.Value,
 
-                            Data = new Dictionary<string, string>()
-                            {
-                                {"notification","Có thằng mới chỉnh data" }
-                            },
-                            Notification = new Notification()
-                            {
-                                Title = "Quản trị viên CoStudy",
-                                Body = "Có thằng mới chỉnh data"
-                            }
-                        };
-                        string response = await FirebaseMessaging.DefaultInstance.SendAsync(mes).ConfigureAwait(true);
-                    }
+                //            Data = new Dictionary<string, string>()
+                //            {
+                //                {"notification","Có thằng mới chỉnh data" }
+                //            },
+                //            Notification = new Notification()
+                //            {
+                //                Title = "Quản trị viên CoStudy",
+                //                Body = "Có thằng mới chỉnh data"
+                //            }
+                //        };
+                //        string response = await FirebaseMessaging.DefaultInstance.SendAsync(mes).ConfigureAwait(true);
+                //    }
                    
-                }
+                //}
                 
             }
             catch (DbUpdateConcurrencyException)
@@ -146,40 +156,59 @@ namespace LearnNet6.Controllers
         [HttpPost("update-all-card")]
         public async Task<IActionResult> UpdateAllCard(List<Card> cards)
         {
-            foreach (var item in cards)
-            {
-                _context.Cards.Update(item);
-                await _context.SaveChangesAsync();
-            }
-            //await _hubContext.Clients.All.SendAsync("UpdateBoardFromServer", cards);
 
-            var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
-            var userId = JwtHelpers.DecodeJwt(accessToken);
-            var currentUser = await _context.AdUsers.FirstOrDefaultAsync(x => x.id == userId);
-            if (currentUser != null)
+            _context.Cards.UpdateRange(cards);
+            _context.SaveChanges();
+
+            var query = cards.AsEnumerable();
+            var todo = query.Where(x => x.Type == CardType.ToDo);
+            var done = query.Where(x => x.Type == CardType.Done);
+            var noNeed = query.Where(x => x.Type == CardType.NoNeed);
+
+            var response = new 
             {
-                var notificationToken = _context.NotificationToken.Where(x => x.UserId == currentUser.Id);
-                foreach (var token in notificationToken)
+                todo = todo,
+                done = done,
+                noNeed = noNeed
+            };
+
+            try
+            {
+                var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
+                var userId = JwtHelpers.DecodeJwt(accessToken);
+                var currentUser = await _context.AdUsers.FirstOrDefaultAsync(x => x.id == userId);
+                if (currentUser != null)
                 {
-                    Message mes = new Message()
+                    var notificationToken = _context.NotificationToken.Where(x => x.UserId == currentUser.Id);
+                    foreach (var token in notificationToken)
                     {
-                        Token = token.Value,
+                        Message mes = new Message()
+                        {
+                            Token = token.Value,
 
-                        Data = new Dictionary<string, string>()
+                            Data = new Dictionary<string, string>()
                             {
                                 {"notification","Có thằng mới chỉnh data" }
                             },
-                        Notification = new Notification()
-                        {
-                            Title = "Tét nofitication",
-                            Body = "Có thằng mới chỉnh data"
-                        }
-                    };
-                    string response = await FirebaseMessaging.DefaultInstance.SendAsync(mes).ConfigureAwait(true);
-                }
+                            Notification = new Notification()
+                            {
+                                Title = "Tét nofitication",
+                                Body = "Có thằng mới chỉnh data"
+                            }
+                        };
+                        string _response = await FirebaseMessaging.DefaultInstance.SendAsync(mes).ConfigureAwait(true);
+                    }
 
+                }
             }
-            return Ok(cards);
+            catch (Exception)
+            {
+                //do nothing
+            }
+            
+
+
+            return Ok(response);
         }
 
 

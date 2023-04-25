@@ -140,7 +140,8 @@ namespace LearnNet6.Services
             var response = list.Select(x => new UserViewModel()
             {
                 Email = x.Email,
-                Fullname = x.FirstName + x.LastName
+                Fullname = x.FirstName + x.LastName, 
+                Id = x.Id
             });
             return response;
 

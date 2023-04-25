@@ -5,6 +5,8 @@ import {filter, takeUntil} from 'rxjs/operators';
 import {InteractionStatus, RedirectRequest} from "@azure/msal-browser";
 import {GraphUserService} from "./shared/graph-user.service";
 import {PushNotificationService} from "./shared/push-message.service";
+import {Profile} from "./models/profile.model";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -16,13 +18,15 @@ export class AppComponent implements OnInit {
 
   isIframe = false;
   loginDisplay = false;
+  profile: Profile | undefined = undefined;
   private readonly _destroying$ = new Subject<void>();
 
   constructor(@Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
               private broadcastService: MsalBroadcastService,
               private authService: MsalService,
               private userGraphService: GraphUserService,
-              private pushMessageService: PushNotificationService) {
+              private pushMessageService: PushNotificationService,
+              private router: Router) {
 
   }
 
@@ -52,6 +56,13 @@ export class AppComponent implements OnInit {
 
   setLoginDisplay() {
     this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+    if(this.loginDisplay){
+      this.userGraphService.decodeToken().subscribe((res: any) => {
+        this.profile = res as Profile;
+        localStorage.setItem('profile', JSON.stringify(this.profile));
+      })
+    }
+    console.log('loginDisplay', this.loginDisplay)
     this.pushMessageService.requestPermission().subscribe(token => {
       if (token) {
 
@@ -85,5 +96,9 @@ export class AppComponent implements OnInit {
       }
     })
 
+  }
+
+  goToProfile() {
+    this.router.navigate(['/profile']);
   }
 }

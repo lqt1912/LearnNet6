@@ -1,4 +1,14 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component, DoCheck,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import {Card} from "../models/card.model";
 import {GraphUserService} from "../shared/graph-user.service";
 import {Observable, of, OperatorFunction, Subject} from "rxjs";
@@ -10,43 +20,82 @@ import {User} from "../models/profile.model";
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements OnInit, OnDestroy {
+export class CardComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() item: Card | undefined;
+
+  @Input() cardAuthor: string = '';
+  @Input() cardAuthorName: string = '';
+
+  @Input() assignedTo: string = '';
+  @Input() assignedToName: string = '';
+
   @Output() changeAuthor = new EventEmitter<Card>();
   users$: Observable<User[]> = new Observable<User[]>();
+
   cardAuthorTypeAhead$: Subject<string> = new Subject<string>();
   cardAuthorLoading = false;
+
+  assignedToTypeAhead$: Subject<string> = new Subject<string>();
+  assignedToLoading = false;
+
   destroy$: Subject<any> = new Subject<any>();
   estimateValueTypeAhead$: Subject<any> = new Subject<any>();
 
   constructor(private graphUserService: GraphUserService) {
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    this.users$ = of([{
+      id: this.cardAuthor,
+      displayName: this.cardAuthorName
+    }, {
+      id: this.assignedTo,
+      displayName: this.assignedToName
+    }]);
+  }
 
   ngOnInit(): void {
-    this.graphUserService.getUserById(this.item?.cardAuthor ? this.item?.cardAuthor : '')
-      .subscribe((res =>{
-        let newArray: User[] = [];
-        newArray.push(res as User);
-        this.users$ = of(newArray);
-      }));
+    this.users$ = of([{
+      id: this.item?.cardAuthor,
+      displayName: this.item?.cardAuthorName
+    }, {
+      id: this.item?.assignedTo,
+      displayName: this.item?.assignedToName
+    }]);
+
     this.cardAuthorTypeAhead$.pipe(
       takeUntil(this.destroy$),
-      debounceTime(3000),
+      debounceTime(2000),
       tap(() => {
         this.cardAuthorLoading = true
       }))
       .subscribe((searchTerm: string) => {
-        this.searchUser(searchTerm)
+        if (searchTerm) {
+          this.searchUser(searchTerm)
+        } else {
+          this.cardAuthorLoading = false
+        }
       });
+
+    this.assignedToTypeAhead$.pipe(
+      takeUntil(this.destroy$),
+      debounceTime(2000),
+      tap(() => {
+        this.assignedToLoading = true
+      })).subscribe((searchTerm: string) => {
+      if (searchTerm) {
+        this.searchUser(searchTerm)
+      }
+    });
+
     this.estimateValueTypeAhead$.pipe(
       takeUntil(this.destroy$),
       debounceTime(3000)
     ).subscribe((estimateValue: number) => {
       const card = {...this.item, estimateValue: estimateValue} as Card;
       this.changeAuthor.emit(card)
-    })
+    });
 
   }
 
@@ -54,20 +103,29 @@ export class CardComponent implements OnInit, OnDestroy {
     this.estimateValueTypeAhead$.next(event);
   }
 
-  onChangeAuthor(item: Card) {
+  onChangeAuthor(item: Card, event?: any) {
+    item.cardAuthorName = event.displayName;
+    item.cardAuthor = event.id;
+    item.cardAuthorEmail = event.userPrincipalName;
     this.changeAuthor.emit(item)
   }
 
-  onSearch(event: any) {
-    this.graphUserService.getAllUsers(event.term).subscribe((x: any) => {
-      this.users$ = of(x.value);
-    });
+  onChangeAssignedTo(item: Card, event?: any) {
+    item.assignedToName = event.displayName;
+    item.assignedTo = event.id;
+    item.assignedToEmail = event.userPrincipalName;
+    this.changeAuthor.emit(item)
+  }
+
+  onChangeValue(item: Card) {
+    this.changeAuthor.emit(item)
   }
 
   searchUser(searchTerm: string) {
     this.graphUserService.getAllUsers(searchTerm).subscribe((x: any) => {
       this.users$ = of(x.value);
-      this.cardAuthorLoading = false
+      this.cardAuthorLoading = false;
+      this.assignedToLoading = false;
     });
   }
 

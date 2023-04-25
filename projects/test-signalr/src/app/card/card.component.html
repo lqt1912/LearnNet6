@@ -12,7 +12,7 @@
                       cols="10"
                       rows="3"
                       [(ngModel)]="item.title"
-                      (ngModelChange)="onChangeAuthor(item)"
+                      (ngModelChange)="onChangeValue(item)"
             ></textarea>
           </td>
         </tr>
@@ -26,7 +26,8 @@
 
         <input type="text" class="form-control border-0"
                [(ngModel)]="item.estimateValue"
-               (ngModelChange)="estimateValueTypeAhead($event)">
+               (ngModelChange)="estimateValueTypeAhead($event)"
+          (change)="onChangeValue(item)">
       </div>
     </div>
   </div>
@@ -41,9 +42,9 @@
                bindValue="id"
                [(ngModel)]="item.cardAuthor"
                [virtualScroll]="true"
-               (change)="onChangeAuthor(item)"
                [typeahead]="cardAuthorTypeAhead$"
-               [loading]="cardAuthorLoading">
+               [loading]="cardAuthorLoading"
+                (change)="onChangeAuthor(item, $event)">
 
       <ng-template ng-option-tmp let-item="item">
         <span>{{item.displayName}}</span>
@@ -64,10 +65,11 @@
                bindValue="id"
                [(ngModel)]="item.assignedTo"
                [virtualScroll]="true"
-               (ngModelChange)="onChangeAuthor(item)"
-               (search)="onSearch($event)">
+               [typeahead]="assignedToTypeAhead$"
+               [loading]="assignedToLoading"
+               (change)="onChangeAssignedTo(item, $event)">
 
-      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+      <ng-template ng-option-tmp let-item="item">
         <span>{{item.displayName}}</span>
         <br>
         <span>{{item.userPrincipalName}}</span>

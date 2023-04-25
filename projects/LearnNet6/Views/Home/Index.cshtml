@@ -2,15 +2,160 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <ul>
-    @foreach (var item in ViewBag.Users)
-{
-    <li>@item.Email - @item.Fullname</li>
-}
-</ul>
+<script src="~/js/peerjs.min.js"></script>
+<script>
+    var isCameraAccessGranted = false;
+    var isMicrophoneAccessGranted = false;
 
+    const checkForVideoAudioAccess = async () => {
+        try {
+            const cameraResult = await navigator.permissions.query({ name: 'camera' });
+            // The state property may be 'denied', 'prompt' and 'granted'
+            this.isCameraAccessGranted = cameraResult.state !== 'denied';
+
+            const microphoneResult = await navigator.permissions.query({ name: 'microphone' });
+            this.isMicrophoneAccessGranted = microphoneResult.state !== 'denied';
+        } catch (e) {
+            console.error('An error occurred while checking the site permissions', e);
+        }
+
+        return true;
+    }
+
+    var peer = new Peer('@ViewBag.CurrentUser');
+
+    peer.on('open', function (id) {
+        console.log('My peer ID is: ' + id);
+    });
+
+    peer.on('connection', function (conn) {
+        conn.on('data', function (data) {
+            console.log('Received', data);
+        });
+
+    });
+
+    peer.on('call', function (call) {
+        console.log('ccccc')
+        navigator.mediaDevices.getUserMedia({
+            video: !this.isMicrophoneAccessGranted,
+            audio: !this.isCameraAccessGranted,
+        }).then(
+            ((receiverStream) => {
+                call.answer(receiverStream);
+                //const video = document.getElementById("videoReceiver");
+
+                //video.srcObject = receiverStream;
+                //video.onloadedmetadata = (e) => {
+                //    video.play();
+                //};
+
+                call.on('stream', function (callerStream) {
+                    const videoFrame = document.getElementById('video-frame');
+
+                    const videoLength = document.querySelectorAll('.video-player').length;
+                    console.log('videoLength', videoLength)
+                    const oldInnerHtml = videoFrame.innerHTML;
+
+                    videoFrame.innerHTML = oldInnerHtml + '<div class="col-6"><h5>Receiver </h5><video class="video-player" style ="width: 200px; height: 200px"> </video></div>';
+
+                    const video = document.querySelectorAll('.video-player');
+
+                    video[videoLength].srcObject = receiverStream;
+                    video[videoLength].onloadedmetadata = (e) => {
+                        video[videoLength].play();
+                    };
+                });
+
+
+            }))
+            .catch(err => {
+                console.log(err)
+            })
+        // Answer the call, providing our mediaStream
+
+
+
+    });
+
+    call = (id) => {
+        console.log("call ", id);
+
+        navigator.mediaDevices.getUserMedia(
+            {
+                video: !isMicrophoneAccessGranted,
+                audio: !this.isCameraAccessGranted,
+            }).then(
+                (callerStream) => {
+                    var call = peer.call(id, callerStream);
+
+                    const video = document.getElementById("videoCaller");
+                    video.srcObject = callerStream;
+                    video.onloadedmetadata = (e) => {
+                        video.play();
+                    };
+
+
+                    call.on('stream', function (receiverStream) {
+
+                        const videoFrame = document.getElementById('video-frame');
+
+                        const videoLength = document.querySelectorAll('.video-player').length;
+                        console.log('videoLength', videoLength)
+                        const oldInnerHtml = videoFrame.innerHTML;
+
+                        videoFrame.innerHTML = oldInnerHtml + '<div class="col-6"><h5>Receiver </h5><video class="video-player" style ="width: 200px; height: 200px"> </video></div>';
+
+                        const video = document.querySelectorAll('.video-player');
+
+                        video[videoLength].srcObject = receiverStream;
+                        video[videoLength].onloadedmetadata = (e) => {
+                            video[videoLength].play();
+                        };
+
+                    })
+                }
+            ).catch(error => {
+                console.log(error)
+            })
+
+
+    }
+</script>
+<div class="text-center">
+    <h1 class="display-4">Welcome:@ViewBag.CurrentUser</h1>
+    <ul style="list-style:none">
+        @foreach (var item in ViewBag.Users)
+        {
+            <li>
+                <div class="row">
+                    <div class="col-8">
+                        @item.Email - @item.Id
+                    </div>
+                    <div class="col-4">
+                        <button onclick="call('@item.Id')">Call</button>
+                    </div>
+                </div>
+            </li>
+        }
+
+    </ul>
+
+    <div id="theater">
+        <div class="row" >
+            <div class="col-6">
+                <h5> Caller</h5>
+                <video style="width: 200px; height: 200px" id="videoCaller"></video>
+
+                <div id="video-frame">
+
+                </div>
+            </div>
+
+        </div>
+
+        <br />
+    </div>
 
 
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>

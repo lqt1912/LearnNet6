@@ -1,0 +1,79 @@
+
+<div class="modal-header">
+  <h4 class="modal-title">Hi there!</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+
+  <form [formGroup]="form" class="row add-card-form">
+    <div class="col-12 row">
+      <div class="col-4"><label class="control-label">Title</label></div>
+      <div class="col-6">
+        <input type="text" placeholder="Title" class="form-control" formControlName="title" >
+      </div>
+    </div>
+    <div class="col-12 row">
+      <div class="col-4">
+        <label class="control-label">Estimate Value</label>
+      </div>
+      <div class="col-6">
+        <input type="text" placeholder="Estimate value" class="form-control" formControlName="estimateValue">
+        <validation-summary
+          [form]="estimateValueForm"
+          [formControlName]="'Estimate value'"
+        ></validation-summary>
+
+      </div>
+    </div>
+    <div class="col-12 row">
+      <div class="col-4">
+        <label class="control-label">Card Author</label>
+      </div>
+      <div class="col-6">
+        <ng-select class="form-control "
+                   [items]="users$ | async"
+                   #select
+                   labelForId="users"
+                   bindLabel="displayName"
+                   bindValue="id"
+                   formControlName="cardAuthor"
+                   [virtualScroll]="true"
+                   [typeahead]="cardAuthorTypeAhead$"
+                   [loading]="cardAuthorLoading"
+                   (change)="onAuthorChange($event)">
+
+          <ng-template ng-option-tmp let-item="item">
+            <span>{{item.displayName}}</span>
+            <br>
+            <span>{{item.userPrincipalName}}</span>
+          </ng-template>
+        </ng-select>
+      </div>
+    </div>
+
+    <div class="col-12 row">
+      <div class="col-4">
+        <label class="control-label">Assign to</label>
+      </div>
+      <div class="col-6">
+
+      </div>
+    </div>
+  </form>
+
+<!--  <form class="form-inline" [formGroup]="form">-->
+<!--    <div class="form-group mb-2">-->
+<!--      <label class="sr-only">Title</label>-->
+<!--      <input type="text" placeholder="Input text" class="form-control-plaintext" formControlName='title'>-->
+<!--    </div>-->
+
+<!--    <div class="form-group mb-2">-->
+<!--      <label class="sr-only">Estimated value</label>-->
+<!--      <input type="text" placeholder="Estimated value" class="form-control-plaintext" formControlName='estimateValue'>-->
+<!--    </div>-->
+    <button type="submit" class="btn btn-primary mb-2" (click)="onSubmit()">Confirm identity</button>
+<!--  </form>-->
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+</div>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LearnNet6.CQRS;
 using LearnNet6.Data.Entity;
 using LearnNet6.Mappers.MappingAction;
 using LearnNet6.Models;
@@ -14,6 +15,8 @@ namespace LearnNet6.Mappers
             CreateMap<AddPostRequest, Post>();
             CreateMap<Post, PostResponse>().AfterMap<PostConvertAction>();
             CreateMap<RefreshToken, RefreshTokenViewModel>();
+            CreateMap<MessageGroup, MessageGroupViewModel>();
+            CreateMap<GroupMember, GroupMemberViewModel>();
         }
     }
 }

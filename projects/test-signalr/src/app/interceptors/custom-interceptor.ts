@@ -1,30 +1,48 @@
 import {Injectable} from "@angular/core";
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from "@angular/common/http";
+import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {finalize, tap} from "rxjs/operators";
+import {catchError, finalize, switchMap, tap} from "rxjs/operators";
+import { MsalService } from "@azure/msal-angular";
 
 @Injectable()
 export class CustomInterceptor implements   HttpInterceptor{
-  constructor() {
+  constructor( private msalService: MsalService) {
   }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const started = Date.now();
-    let ok: string;
+  public intercept(request: HttpRequest<any>, next: HttpHandler): any {
+    try {
+      let accounts = this.msalService.instance.getAllAccounts();
+      const accessTokenRequest = {
+        scopes: ["Directory.Read.All"],
+        account: accounts[0]
+      };
 
-    return next.handle(req).pipe(
-      tap({
-        next: (event) =>
-          (ok = event instanceof HttpResponse ? 'succeeded' : ''),
-        error: (error) => (ok = 'failed'),
-      }),
+      return this.msalService.acquireTokenSilent(accessTokenRequest).pipe(switchMap(response => {
 
-      finalize(() => {
-        const elapsed = Date.now() - started;
-        const msg = `${req.method} "${req.urlWithParams} ${ok} in ${elapsed} ms.`;
-        console.log(msg);
-      })
-    );
+        let newHeaders = request.headers
+          .set("access_token", response.accessToken)
+          .set("_author", `Bearer ${response.idToken}`);
+
+        localStorage.setItem('access_token', response.idToken)
+        request = request.clone({ headers: newHeaders });
+
+        return next.handle(request).pipe(tap((event: HttpEvent<any>) => { }, (err: any) => {
+          if (err instanceof HttpErrorResponse) {
+            console.log(err)
+          }
+        }));
+      }), catchError((o) => {
+        console.log('Custom error',o);
+
+        return next.handle(request);
+      }));
+
+
+    } catch (error) {
+      next.handle(request);
+    }
   }
+
+
 
 }

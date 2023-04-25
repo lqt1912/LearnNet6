@@ -83,7 +83,8 @@ const firebaseConfig = {
       protectedResourceMap: new Map([
         ['https://graph.microsoft.com/v1.0/me', ['Directory.Read.All']],
         ['https://localhost:7088/api/', [`${environment.aad.clientId}/.default`]],
-        ['https://localhost:7088/UserGraph/*', ['Directory.Read.All']]
+        ['/', ['Directory.Read.All']],
+        ['/', [`${environment.aad.clientId}/.default`]]
       ])
     })
   ],
@@ -92,6 +93,7 @@ const firebaseConfig = {
     useClass: MsalInterceptor,
     multi: true
   }, {
+
     provide: HTTP_INTERCEPTORS,
     useClass: CustomInterceptor,
     multi: true

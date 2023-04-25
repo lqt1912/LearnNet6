@@ -8,6 +8,8 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { NotificationToastComponent } from './notification-toast/notification-toast.component';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {CommonModule} from "@angular/common";
+import { AddNewTaskModalComponent } from './add-new-task-modal/add-new-task-modal.component';
+import { ValidationSummaryComponent } from './validation-summary/validation-summary.component';
 
 @NgModule({
   imports: [
@@ -32,7 +34,9 @@ import {CommonModule} from "@angular/common";
     MatSnackBarModule
   ],
   declarations: [
-    NotificationToastComponent
+    NotificationToastComponent,
+    AddNewTaskModalComponent,
+    ValidationSummaryComponent
   ]
 })
 export class SharedMNodule {

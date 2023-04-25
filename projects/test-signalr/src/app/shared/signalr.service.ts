@@ -1,19 +1,25 @@
 import {Injectable} from "@angular/core";
-import {HubConnection} from "@microsoft/signalr";
+import {HubConnection, IHttpConnectionOptions} from "@microsoft/signalr";
 import * as signalR from "@microsoft/signalr";
 import {environment} from "../../environments/environment";
 import {Subject} from "rxjs";
-import {Card} from "../models/card.model";
+import {BoardColumn, Card} from "../models/card.model";
 
 @Injectable()
 export class SignalRService {
   private connection: HubConnection | undefined;
-  cards: Subject<Card[]> = new Subject<Card[]>();
+  boardUpdated: Subject<BoardColumn[]> = new Subject<BoardColumn[]>();
   singleCardUpdate: Subject<Card> = new Subject<Card>();
   initConnection() {
+    const accessToken = localStorage.getItem('access_token') || 'no_token_found';
+
     this.connection = new signalR.HubConnectionBuilder()
       .configureLogging(signalR.LogLevel.Information)
-      .withUrl(environment.serverUrl + 'signalRHub')
+      .withUrl(environment.serverUrl + 'signalRHub',{
+        accessTokenFactory: () => {
+          return accessToken.replace('Bearer ', '');;
+        }
+      })
       .build();
   }
 
@@ -25,9 +31,11 @@ export class SignalRService {
     this.connection?.invoke('JoinGroup', groupName);
   }
 
+
   listenUpdateBoardFromServer() {
     this.connection?.on("UpdateBoardFromServer", (x: any) => {
-      this.cards.next(x);
+      console.log('UpdateBoardFromServer',x)
+      this.boardUpdated.next(x);
     });
   }
 
@@ -60,7 +68,8 @@ export class SignalRService {
   invokeSendMessageGroup(groupName?: string){
     this.connection?.invoke('SendMessageGroup', groupName, `Message for ${groupName}`)
   }
-  invokeUpdateBoard(cards: Card[]) {
+  invokeUpdateBoard(cards: BoardColumn[]) {
+    console.log('Card to invoke', cards)
     this.connection?.invoke(SignalrInvokeConstant.UpdateBoard, cards)
   }
 }

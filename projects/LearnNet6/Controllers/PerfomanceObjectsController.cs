@@ -17,6 +17,10 @@ namespace LearnNet6.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IPerformanceObjectRepository performanceObjectRepository;
         private readonly IPerformanceTableRepository performanceTableRepository;
+
+        private const string POST_SQL_QUERY = "INSERT INTO [PerfomanceObject] VALUES (@p1, @p2, @p3, @p4, @p5, @p6)";
+        private const string GET_SQL_QUERY = "select * from [PerfomanceObject] where Id = (select INDENT_CURRENT('PerfomanceObject'))";
+
         public PerfomanceObjectsController(ApplicationDbContext context, IPerformanceObjectRepository performanceObjectRepository, IPerformanceTableRepository performanceTableRepository)
         {
             _context = context;
@@ -31,7 +35,7 @@ namespace LearnNet6.Controllers
         public async Task<ActionResult<PerfomanceObject>> PostPerfomanceObject()
         {
             var randomLines = System.IO.File.ReadAllLines("words.txt");
-            var obj = new 
+            var obj = new
             {
                 Name = StringHelper.RandomString(new Random().Next(10, 200), randomLines),
                 Value = StringHelper.RandomString(new Random().Next(49), randomLines),
@@ -42,15 +46,24 @@ namespace LearnNet6.Controllers
                 Id = 1
 
             };
-            var query = "INSERT INTO [PerfomanceObject] VALUES (@p1, @p2, @p3, @p4, @p5, @p6)";
-            performanceObjectRepository.ExecuteNoneQuery(query,
+
+            var exec = performanceObjectRepository.ExecuteNoneQuery(POST_SQL_QUERY,
                 new SqlParameter("@p1", obj.Name),
                 new SqlParameter("@p2", obj.Value),
                 new SqlParameter("@p3", obj.Note),
                 new SqlParameter("@p4", obj.CardAuthor),
                 new SqlParameter("@p5", obj.AssignTo),
                 new SqlParameter("@p6", obj.CardType));
-            return Ok(obj);
+
+            if (exec > 0)
+            {
+                var result = performanceObjectRepository.ExecuteSqlRawForQueryType(GET_SQL_QUERY).FirstOrDefault();
+                return Ok(result);
+            }
+            else
+            {
+                return Ok(new PerfomanceObject());
+            }
         }
 
         [HttpGet]

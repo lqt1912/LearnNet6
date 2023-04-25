@@ -19,22 +19,28 @@ namespace LearnNet6.ExtensionsBuilder
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            //builder.Services.AddAuthentication().AddJwtBearer(o =>
+            
+
+            //builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
+
+            //builder.Services.AddAuthentication(x =>
             //{
-            //    o.TokenValidationParameters = new TokenValidationParameters
+            //    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+            //.AddJwtBearer(x =>
+            //{
+            //    x.Authority = "https://login.microsoftonline.com/5d0bab8d-cd6a-40ec-a09b-2e2308defc9d/oauth2/v2.0";
+            //    x.Audience = "c026de13-f3bd-4200-a8cf-e21b69abd736";
+            //    x.SaveToken = true;
+            //    x.TokenValidationParameters = new TokenValidationParameters
             //    {
-            //        ValidIssuer = configuration["Jwt:Issuer"],
-            //        ValidAudience = configuration["Jwt:Audience"],
-            //        IssuerSigningKey = new SymmetricSecurityKey
-            //            (Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+            //        ValidateIssuerSigningKey = false,
             //        ValidateIssuer = true,
             //        ValidateAudience = true,
-            //        ValidateLifetime = false,
-            //        ValidateIssuerSigningKey = true
             //    };
             //});
 
-            builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
         }
     }
 }

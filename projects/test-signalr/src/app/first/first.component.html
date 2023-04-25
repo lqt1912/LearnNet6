@@ -1,5 +1,6 @@
-<h3>{{this.profile?.department}}</h3>
 <div class="container">
+  <h3 class="department-title">Current department: <span class="department-name">{{this.profile?.department}}</span>
+  </h3>
   <div class="row d-flex">
     <div class="col-4 ">
       <h2>To do</h2>
@@ -15,9 +16,14 @@
         <app-card
           *ngFor="let item of todo"
           [item]="item"
+          [assignedTo]="item.assignedTo"
+          [assignedToName]="item.assignedToName"
+          [cardAuthor]="item.cardAuthor"
+          [cardAuthorName]="item.cardAuthorName"
           (changeAuthor)="onChangeAuthor($event)">
         </app-card>
       </div>
+      <button class="btn btn-primary" (click)="addTask()"> Add task</button>
     </div>
 
     <div class="col-4 ">
@@ -34,7 +40,11 @@
         <app-card
           *ngFor="let item of done"
           [item]="item"
-          (changeAuthor)="onChangeAuthor($event)">
+          (changeAuthor)="onChangeAuthor($event)"
+          [assignedTo]="item.assignedTo"
+          [assignedToName]="item.assignedToName"
+          [cardAuthor]="item.cardAuthor"
+          [cardAuthorName]="item.cardAuthorName">
         </app-card>
 
       </div>
@@ -54,7 +64,11 @@
         <app-card
           *ngFor="let item of noNeed"
           [item]="item"
-          (changeAuthor)="onChangeAuthor($event)">
+          (changeAuthor)="onChangeAuthor($event)"
+          [assignedTo]="item.assignedTo"
+          [assignedToName]="item.assignedToName"
+          [cardAuthor]="item.cardAuthor"
+          [cardAuthorName]="item.cardAuthorName">
         </app-card>
 
       </div>

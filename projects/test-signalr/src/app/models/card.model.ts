@@ -5,5 +5,15 @@ export interface  Card{
   type: number,
   cardAuthor: string,
   estimateValue: number,
-  assignedTo: string
+  assignedTo: string,
+  cardAuthorName: string,
+  cardAuthorEmail: string,
+  assignedToName: string,
+  assignedToEmail: string
+}
+
+
+export interface BoardColumn {
+  cardType: number,
+  cardValue: Card[]
 }

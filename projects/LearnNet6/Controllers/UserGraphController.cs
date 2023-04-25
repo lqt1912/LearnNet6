@@ -16,11 +16,13 @@ namespace LearnNet6.Controllers
 {
     [Route("/[controller]/[action]")]
     [ApiController]
-    public class UserGraphController : ControllerBase
+    public class UserGraphController : CustomController
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ApplicationDbContext _context;
-        public UserGraphController(IHttpClientFactory httpClientFactory, ApplicationDbContext context)
+
+        public UserGraphController(IHttpClientFactory httpClientFactory, 
+            ApplicationDbContext context)
         {
             _httpClientFactory = httpClientFactory;
             _context = context;
@@ -36,9 +38,10 @@ namespace LearnNet6.Controllers
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                request.AddParameter("$search", $"\"displayName:{keyword}\" OR \"userPrincipalName:{keyword}\"  OR \"mail:{keyword}\" OR \"id:{keyword}\"");
+                request.AddParameter("$search", $"\"displayName:{keyword}\" OR \"userPrincipalName:{keyword}\"  OR \"mail:{keyword}\"");
             }
             var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString();
+
             request.AddHeader("Authorization", accessToken);
             request.AddHeader("ConsistencyLevel", "eventual");
             var result = restClient.Execute(request);
@@ -49,6 +52,7 @@ namespace LearnNet6.Controllers
 
                 return Ok(graphUserDto);
             }
+
             return Ok(1);
 
         }
@@ -80,9 +84,7 @@ namespace LearnNet6.Controllers
         [HttpGet]
         public async Task<IActionResult> DecodeToken()
         {
-            var accessToken = Request.HttpContext.Request.Headers["Authorization"].ToString().Split(' ')[1];
-            var userId = JwtHelpers.DecodeJwt(accessToken);
-            var currentUser = await _context.AdUsers.FirstOrDefaultAsync(x => x.id == userId);
+            var currentUser = await _context.AdUsers.FirstOrDefaultAsync(x => x.id == UserId);
             return Ok(currentUser);
         }
 

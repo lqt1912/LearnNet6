@@ -90,63 +90,63 @@ namespace LearnNet6.Data
             });
             builder.Entity<ApplicationUser>().HasData(addedUsers);
 
-            builder.Entity<Card>().HasData(
-                new Card()
-                {
-                    Id = Guid.NewGuid(),
-                    Order = 0,
-                    Title = "Harmless Inside",
-                    Type = CardType.From
-                },
-               new Card()
-               {
-                   Id = Guid.NewGuid(),
-                   Order = 1,
-                   Title = "Unacceptable Figure",
-                   Type = CardType.From
-               },
-               new Card()
-               {
-                   Id = Guid.NewGuid(),
-                   Order = 2,
-                   Title = "Brisk Reality",
-                   Type = CardType.From
-               },
-               new Card()
-               {
-                   Id = Guid.NewGuid(),
-                   Order = 3,
-                   Title = "Overlooked Instruction",
-                   Type = CardType.From
-               },
-               new Card()
-               {
-                   Id = Guid.NewGuid(),
-                   Order = 4,
-                   Title = "Red Bend",
-                   Type = CardType.From
-               },
-               new Card()
-               {
-                   Id = Guid.NewGuid(),
-                   Order = 1,
-                   Title = "Stark Drama",
-                   Type = CardType.To
-               },
-               new Card()
-               {
-                   Id = Guid.NewGuid(),
-                   Order = 2,
-                   Title = "Droopy Reception",
-                   Type = CardType.To
-               },
-               new Card()
-               {
-                   Id = Guid.NewGuid(),
-                   Order = 3,
-                   Title = "Firsthand Vehicle",
-                   Type = CardType.To
-               });
+            //builder.Entity<Card>().HasData(
+            //    new Card()
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        Order = 0,
+            //        Title = "Harmless Inside",
+            //        Type = CardType.ToDo
+            //    },
+            //   new Card()
+            //   {
+            //       Id = Guid.NewGuid(),
+            //       Order = 1,
+            //       Title = "Unacceptable Figure",
+            //       Type = CardType.ToDo
+            //   },
+            //   new Card()
+            //   {
+            //       Id = Guid.NewGuid(),
+            //       Order = 2,
+            //       Title = "Brisk Reality",
+            //       Type = CardType.ToDo
+            //   },
+            //   new Card()
+            //   {
+            //       Id = Guid.NewGuid(),
+            //       Order = 3,
+            //       Title = "Overlooked Instruction",
+            //       Type = CardType.ToDo
+            //   },
+            //   new Card()
+            //   {
+            //       Id = Guid.NewGuid(),
+            //       Order = 4,
+            //       Title = "Red Bend",
+            //       Type = CardType.ToDo
+            //   },
+            //   new Card()
+            //   {
+            //       Id = Guid.NewGuid(),
+            //       Order = 1,
+            //       Title = "Stark Drama",
+            //       Type = CardType.ToDo
+            //   },
+            //   new Card()
+            //   {
+            //       Id = Guid.NewGuid(),
+            //       Order = 2,
+            //       Title = "Droopy Reception",
+            //       Type = CardType.ToDo
+            //   },
+            //   new Card()
+            //   {
+            //       Id = Guid.NewGuid(),
+            //       Order = 3,
+            //       Title = "Firsthand Vehicle",
+            //       Type = CardType.ToDo
+            //   });
             base.OnModelCreating(builder);
         }
     }

@@ -1,5 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
+  <a class="navbar-brand">
+    <span style="color: darkgoldenrod">my</span>
+    <span style="color: blue; font-weight: bold">Task</span>
+    <span style="color: saddlebrown; font-weight: bold;">Board</span>
+  </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -7,34 +11,29 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
+      <li class="nav-item ">
         <a class="nav-link"
            routerLink="/first-component"
-           routerLinkActive="active">First Component</a>
+           routerLinkActive="active">Taskboard</a>
       </li>
       <li class="nav-item">
         <a class="nav-link"
            routerLink="/second-component"
-           routerLinkActive="active">Second Component</a>
+           routerLinkActive="active">Message</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link"
-           routerLink="/profile"
-           routerLinkActive="active">
-          Profile</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="!loginDisplay" (click)="login()">
-          Login</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" *ngIf="loginDisplay" (click)="logout()">
-          Log out</a>
-      </li>
+
     </ul>
     <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <div class="profile-container">
+        <div class="user-section" *ngIf="loginDisplay" (click)="goToProfile()">
+          <div class="full-name">{{profile?.displayName}}</div>
+          <div class="user-type">{{profile?.userType}}</div>
+        </div>
+        <button class="btn btn-outline-danger log-out" *ngIf="loginDisplay" (click)="logout()">Log out</button>
+        <button class="btn btn-primary log-in" *ngIf="!loginDisplay" (click)="login()"></button>
+
+      </div>
+
     </form>
   </div>
 </nav>
